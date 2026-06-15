@@ -1,0 +1,2938 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Isometric Certify Data Ingestion API",
+    "version": "v0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Get Component Blueprints",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/component_blueprints",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Lists component blueprints in the Isometric system"
+    },
+    {
+      "info": {
+        "name": "Get Component Blueprint",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/component_blueprints/:key",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "key",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Get Component Blueprint"
+    },
+    {
+      "info": {
+        "name": "Get Removal Templates",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/projects/:project_id/removal_templates",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "project_id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Lists all removal templates within the given project"
+    },
+    {
+      "info": {
+        "name": "Get Removal Template",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/projects/:project_id/removal_templates/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "project_id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Gets a single removal template within the given project"
+    },
+    {
+      "info": {
+        "name": "Get Removal",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/removals/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Get Removal"
+    },
+    {
+      "info": {
+        "name": "Patch Removal",
+        "type": "http"
+      },
+      "http": {
+        "method": "PATCH",
+        "url": "/mrv/v0/removals/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Updates a removal in the Isometric system. The removal will be recalculated, if it is are not in an immutable state."
+    },
+    {
+      "info": {
+        "name": "Delete Removal",
+        "type": "http"
+      },
+      "http": {
+        "method": "DELETE",
+        "url": "/mrv/v0/removals/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "This endpoint deletes a removal - this is irreversible and the removal cannot be recovered.\n\nIt will return an error if the removal is not in DRAFT status."
+    },
+    {
+      "info": {
+        "name": "Get Removals",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/removals",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "supplier_reference_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Get Removals"
+    },
+    {
+      "info": {
+        "name": "Post Removal",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/mrv/v0/removals",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Post Removal"
+    },
+    {
+      "info": {
+        "name": "Get Removal Components",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/removals/:id/component_attributions",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Get Removal Components"
+    },
+    {
+      "info": {
+        "name": "Patch Removal Components",
+        "type": "http"
+      },
+      "http": {
+        "method": "PATCH",
+        "url": "/mrv/v0/removals/:id/component_attributions",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Change component attributions for the removal."
+    },
+    {
+      "info": {
+        "name": "Get Ghg Statements",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/ghg_statements",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Lists GHG statements in the Isometric system"
+    },
+    {
+      "info": {
+        "name": "Post Ghg Statement",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/mrv/v0/ghg_statements",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Submits a series of removals for verification"
+    },
+    {
+      "info": {
+        "name": "Post Ghg Statement Submit",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/mrv/v0/ghg_statements/:id/submit",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Post Ghg Statement Submit"
+    },
+    {
+      "info": {
+        "name": "Get Ghg Statement",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/ghg_statements/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Get a single GHG statement"
+    },
+    {
+      "info": {
+        "name": "Post Ghg Statement Component",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/mrv/v0/ghg_statement_components",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Creates a component that will be automatically and evenly attributed to all removals with the GHG Statement."
+    },
+    {
+      "info": {
+        "name": "Post Project Component",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/mrv/v0/project_components",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Creates a component that will be automatically attributed to GHG statements in the project based on the provided allocation strategy."
+    },
+    {
+      "info": {
+        "name": "Post Project Component Removal Attribution",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/mrv/v0/project_components/:id/removal_attributions",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Manually attributes or removes attribution of a project component to a removal."
+    },
+    {
+      "info": {
+        "name": "Delete Project Component Removal Attribution",
+        "type": "http"
+      },
+      "http": {
+        "method": "DELETE",
+        "url": "/mrv/v0/project_components/:component_id/removal_attributions/:removal_id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "component_id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "removal_id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Removes all attribution of a project component to a removal."
+    },
+    {
+      "info": {
+        "name": "Get Current Organisation",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/organisation",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Gets the organisation associated with the client"
+    },
+    {
+      "info": {
+        "name": "Get Datapoints",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/datapoints",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "supplier_reference_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "display_name_contains",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "project_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "quantity_kind",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "measurement_sample_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "used_in_removal",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "used_in_ghg_statement",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "used_in_removal_template",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "used_in_scope",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Lists datapoints in the Isometric system"
+    },
+    {
+      "info": {
+        "name": "Post Datapoint",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/mrv/v0/datapoints",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Creates a datapoint in the Isometric system"
+    },
+    {
+      "info": {
+        "name": "Get Datapoint",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/datapoints/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Returns a single datapoint in the Isometric system"
+    },
+    {
+      "info": {
+        "name": "Patch Datapoint",
+        "type": "http"
+      },
+      "http": {
+        "method": "PATCH",
+        "url": "/mrv/v0/datapoints/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Updates a datapoint in the Isometric system. Associated components and removals will be recalculated, if they are not in an immutable state."
+    },
+    {
+      "info": {
+        "name": "Delete Datapoint",
+        "type": "http"
+      },
+      "http": {
+        "method": "DELETE",
+        "url": "/mrv/v0/datapoints/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Delete a datapoint resource. Will fail if the datapoint is in use by a component."
+    },
+    {
+      "info": {
+        "name": "Get Datapoint Components",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/datapoints/:id/components",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Lists components associated with a datapoint in the Isometric system"
+    },
+    {
+      "info": {
+        "name": "Get Datapoint Removal Template Components",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/datapoints/:id/removal_template_components",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Lists removal template components that use this datapoint"
+    },
+    {
+      "info": {
+        "name": "Get Sources",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/sources",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "supplier_reference_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "project_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Lists sources in the Isometric system"
+    },
+    {
+      "info": {
+        "name": "Post Source",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/mrv/v0/sources",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Creates a source in the Isometric system. The client is provided with a presigned\nupload URL which must be used to upload the document associated with this source.\nSource documents are private, but other fields will be visible publicly once\ncredits are issued for an associated removal, moving it to the public registry."
+    },
+    {
+      "info": {
+        "name": "Post Signed Upload Url",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/mrv/v0/sources/:id/signed_upload_url",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Recreates a presigned upload URL, which must be used to upload the documentation\nassociated with this source. If the document is already uploaded, this endpoint will\nresponse with a 409 error."
+    },
+    {
+      "info": {
+        "name": "Get Source",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/sources/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Get single source"
+    },
+    {
+      "info": {
+        "name": "Patch Source",
+        "type": "http"
+      },
+      "http": {
+        "method": "PATCH",
+        "url": "/mrv/v0/sources/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Patches metadata associated with a source in the Isometric system."
+    },
+    {
+      "info": {
+        "name": "Delete Source",
+        "type": "http"
+      },
+      "http": {
+        "method": "DELETE",
+        "url": "/mrv/v0/sources/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Deletes a source in the Isometric system. This is irreversible and the source cannot be recovered."
+    },
+    {
+      "info": {
+        "name": "Get Source Private Url",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/sources/:id/private_url",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Returns a short-lived signed URL to download a source document from. This query will fail if\nthe source does not have a private URL or if the authenticated user does not have\naccess to it. That's why you need to first check the `urlInfo` field on the source\nobject, to ensure that you can safely use this query."
+    },
+    {
+      "info": {
+        "name": "Get Processes",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/processes",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "**Deprecated**. Please use `GET /projects/{project_id}/removal_templates` instead.\n\nLists processes in the Isometric system"
+    },
+    {
+      "info": {
+        "name": "Get Projects",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/projects",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Lists projects in the Isometric system"
+    },
+    {
+      "info": {
+        "name": "Get Components",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/components",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "supplier_reference_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "scope",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "ghg_statement_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "project_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "removal_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Lists components in the Isometric system"
+    },
+    {
+      "info": {
+        "name": "Post Component",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/mrv/v0/components",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Creates a component in the Isometric system"
+    },
+    {
+      "info": {
+        "name": "Get Component",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/components/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Get a single component in the Isometric system"
+    },
+    {
+      "info": {
+        "name": "Patch Component",
+        "type": "http"
+      },
+      "http": {
+        "method": "PATCH",
+        "url": "/mrv/v0/components/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Creates a component in the Isometric system. Associated removals will be recalculated, if they are not in an immutable state."
+    },
+    {
+      "info": {
+        "name": "Delete Component",
+        "type": "http"
+      },
+      "http": {
+        "method": "DELETE",
+        "url": "/mrv/v0/components/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Delete a component resource. Will fail if the component is in use by a verified removal."
+    },
+    {
+      "info": {
+        "name": "Get Feedstock Types",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/feedstock_types",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "supplier_reference_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Lists feedstock types in the Isometric system. Feedstock types can only be created via the Certify UI."
+    },
+    {
+      "info": {
+        "name": "Get Feedstock Type",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/feedstock_types/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Get a single feedstock type in the Isometric system. Feedstock types can only be created via the Certify UI."
+    },
+    {
+      "info": {
+        "name": "Patch Feedstock Type",
+        "type": "http"
+      },
+      "http": {
+        "method": "PATCH",
+        "url": "/mrv/v0/feedstock_types/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Updates a feedstock type in the Isometric system. Feedstock types can only be created via the Certify UI."
+    },
+    {
+      "info": {
+        "name": "Delete Feedstock Type",
+        "type": "http"
+      },
+      "http": {
+        "method": "DELETE",
+        "url": "/mrv/v0/feedstock_types/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Deletes a feedstock type in the Isometric system. Feedstock types can only be created via the Certify UI."
+    },
+    {
+      "info": {
+        "name": "Post Feedstock Batch",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/mrv/v0/feedstock_batches",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Creates a feedstock batch in the Isometric system"
+    },
+    {
+      "info": {
+        "name": "Get Feedstock Batches",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/feedstock_types/:feedstock_type_id/feedstock_batches",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "feedstock_type_id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Lists feedstock batches in the Isometric system."
+    },
+    {
+      "info": {
+        "name": "Get Feedstock Batch",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/feedstock_batches/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Get a single feedstock batch in the Isometric system."
+    },
+    {
+      "info": {
+        "name": "Delete Feedstock Batch",
+        "type": "http"
+      },
+      "http": {
+        "method": "DELETE",
+        "url": "/mrv/v0/feedstock_batches/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Deletes a feedstock batch in the Isometric system."
+    },
+    {
+      "info": {
+        "name": "Get Production Batches",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/production_batches",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Lists production batches in the Isometric system."
+    },
+    {
+      "info": {
+        "name": "Post Production Batch",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/mrv/v0/production_batches",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Creates a production batch in the Isometric system"
+    },
+    {
+      "info": {
+        "name": "Get Production Batch",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/production_batches/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Get a single production batch in the Isometric system"
+    },
+    {
+      "info": {
+        "name": "Delete Production Batch",
+        "type": "http"
+      },
+      "http": {
+        "method": "DELETE",
+        "url": "/mrv/v0/production_batches/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Deletes a production batch in the Isometric system"
+    },
+    {
+      "info": {
+        "name": "Get Biochar Applications",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/biochar_applications",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Lists biochar applications in the Isometric system."
+    },
+    {
+      "info": {
+        "name": "Post Biochar Application",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/mrv/v0/biochar_applications",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Creates a biochar application in the Isometric system"
+    },
+    {
+      "info": {
+        "name": "Get Biochar Application",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/biochar_applications/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Get a single biochar application in the Isometric system"
+    },
+    {
+      "info": {
+        "name": "Delete Biochar Application",
+        "type": "http"
+      },
+      "http": {
+        "method": "DELETE",
+        "url": "/mrv/v0/biochar_applications/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Deletes a biochar application in the Isometric system"
+    },
+    {
+      "info": {
+        "name": "Get Measurement Location",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/measurement_locations/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Get a single measurement location in the Isometric system"
+    },
+    {
+      "info": {
+        "name": "Delete Measurement Location",
+        "type": "http"
+      },
+      "http": {
+        "method": "DELETE",
+        "url": "/mrv/v0/measurement_locations/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Deletes a measurement location in the Isometric system"
+    },
+    {
+      "info": {
+        "name": "Get Measurement Locations",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/measurement_locations",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "supplier_reference_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Lists measurement locations in the Isometric system"
+    },
+    {
+      "info": {
+        "name": "Post Measurement Locations",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/mrv/v0/measurement_locations",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Post Measurement Locations"
+    },
+    {
+      "info": {
+        "name": "Get Project Storage Location Monitoring Requirements",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/projects/:project_id/storage_locations/:id/monitoring_requirements",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "project_id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Lists all monitoring requirements for a project storage location."
+    },
+    {
+      "info": {
+        "name": "Get Project Monitoring Requirements",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/projects/:id/monitoring_requirements",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "storage_location_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "storage_unit_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Lists all monitoring requirements for a project."
+    },
+    {
+      "info": {
+        "name": "Get Project Monitoring Requirement",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/projects/:project_id/monitoring_requirements/:requirement_id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "project_id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "requirement_id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Get a specific monitoring requirement within a project."
+    },
+    {
+      "info": {
+        "name": "Get Monitoring Submissions",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/projects/:project_id/monitoring_requirements/:id/submissions",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "project_id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Lists all monitoring submissions for a project monitoring requirement"
+    },
+    {
+      "info": {
+        "name": "Post Monitoring Submission",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/mrv/v0/projects/:project_id/monitoring_requirements/:id/submissions",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "project_id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Creates a monitoring submission for a project monitoring requirement.\n\nThe submission is associated with a previously uploaded source document (see [Post Source](/mrv/post-source)).\nOne source may be used to create multiple submissions."
+    },
+    {
+      "info": {
+        "name": "Delete Monitoring Submission",
+        "type": "http"
+      },
+      "http": {
+        "method": "DELETE",
+        "url": "/mrv/v0/projects/:project_id/monitoring_requirements/:monitoring_requirement_id/submissions/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "project_id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "monitoring_requirement_id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Deletes a monitoring submission for a project monitoring requirement"
+    },
+    {
+      "info": {
+        "name": "Get Storage Units",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/storage_units",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "storage_location_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "supplier_reference_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Gets all storage units."
+    },
+    {
+      "info": {
+        "name": "Post Storage Unit",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/mrv/v0/storage_units",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Creates a storage unit in the Isometric system."
+    },
+    {
+      "info": {
+        "name": "Get Storage Unit",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/storage_units/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Gets storage unit by ID."
+    },
+    {
+      "info": {
+        "name": "Get Sensors",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/sensors",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "project_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "reference",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Gets all sensors."
+    },
+    {
+      "info": {
+        "name": "Post Sensors",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/mrv/v0/sensors",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Creates a sensor in the Isometric system."
+    },
+    {
+      "info": {
+        "name": "Get Sensor",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/sensors/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Gets sensor by ID."
+    },
+    {
+      "info": {
+        "name": "Get Storage Location",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/projects/:project_id/storage_locations/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "project_id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Gets storage location for a project."
+    },
+    {
+      "info": {
+        "name": "Patch Storage Location",
+        "type": "http"
+      },
+      "http": {
+        "method": "PATCH",
+        "url": "/mrv/v0/projects/:project_id/storage_locations/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "project_id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Patches storage location in the Isometric system."
+    },
+    {
+      "info": {
+        "name": "Delete Storage Location",
+        "type": "http"
+      },
+      "http": {
+        "method": "DELETE",
+        "url": "/mrv/v0/projects/:project_id/storage_locations/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "project_id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Deletes a storage location for a project"
+    },
+    {
+      "info": {
+        "name": "Get Storage Locations",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/projects/:project_id/storage_locations",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "project_id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Gets storage locations for a project."
+    },
+    {
+      "info": {
+        "name": "Post Storage Location",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/mrv/v0/projects/:project_id/storage_locations",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "project_id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Creates a storage location for a project in the Isometric system."
+    },
+    {
+      "info": {
+        "name": "Get Measurement Samples",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/measurement_samples",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Get Measurement Samples"
+    },
+    {
+      "info": {
+        "name": "Post Measurement Samples",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/mrv/v0/measurement_samples",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Post Measurement Samples"
+    },
+    {
+      "info": {
+        "name": "Get Data Upload Submission",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/data-upload-submissions/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Get a specific data upload job by ID"
+    },
+    {
+      "info": {
+        "name": "Get Data Upload Submissions",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/mrv/v0/data-upload-submissions",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "status",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "List data upload jobs with optional status filtering"
+    },
+    {
+      "info": {
+        "name": "Post Data Upload Submission",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/mrv/v0/data-upload-submissions",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Post Data Upload Submission"
+    },
+    {
+      "info": {
+        "name": "Post File Upload",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/mrv/v0/file-uploads",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Post File Upload"
+    }
+  ],
+  "bundled": true
+}

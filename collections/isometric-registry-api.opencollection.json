@@ -1,0 +1,1495 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Isometric Registry API",
+    "version": "v0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Current Organisation",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/organisation",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "The organisation currently authenticated.\n\nUse this endpoint to get your organisation_id."
+    },
+    {
+      "info": {
+        "name": "Organisation",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/organisations/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Information about a specific organisation."
+    },
+    {
+      "info": {
+        "name": "Organisation Orders",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/organisations/:id/orders",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path",
+            "description": "The ID of the organisation"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "A paginated list of all orders placed by the organisation, sorted by descending placement date."
+    },
+    {
+      "info": {
+        "name": "Organisation Credit Balance",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/organisations/:id/credit_balance",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Information about active and retired credits owned by the given organisation.\n\nIncludes total balances as well as balances split by orders, projects and suppliers."
+    },
+    {
+      "info": {
+        "name": "Organisation Credit Batches",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/organisations/:id/credit_batches",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path",
+            "description": "The ID of the organisation."
+          },
+          {
+            "name": "supplier_id",
+            "value": "",
+            "type": "query",
+            "description": "Filter credit batches by the supplier that was issued the credits"
+          },
+          {
+            "name": "project_id",
+            "value": "",
+            "type": "query",
+            "description": "Filter credit batches by the project that the credits were issued for"
+          },
+          {
+            "name": "issuance_id",
+            "value": "",
+            "type": "query",
+            "description": "Filter credit batches by their issuance"
+          },
+          {
+            "name": "delivery_id",
+            "value": "",
+            "type": "query",
+            "description": "Filter credit batches by the delivery that they were part of"
+          },
+          {
+            "name": "order_id",
+            "value": "",
+            "type": "query",
+            "description": "Filter credit batches by the order they have been delivered against"
+          },
+          {
+            "name": "retirement_id",
+            "value": "",
+            "type": "query",
+            "description": "Filter credit batches by the retirement they have been part of"
+          },
+          {
+            "name": "status",
+            "value": "",
+            "type": "query",
+            "description": "Filter credit batches by status. Note that 'split' status is excluded by default."
+          },
+          {
+            "name": "issued_after",
+            "value": "",
+            "type": "query",
+            "description": "Filter credit batches to only return ones issued strictly after this timestamp. Format: ISO8601-like including timezone, eg. 2021-01-01T00:00:00Z"
+          },
+          {
+            "name": "issued_before",
+            "value": "",
+            "type": "query",
+            "description": "Filter credit batches to only return ones issued strictly before this timestamp. Format: ISO8601-like including timezone, eg. 2024-01-01T00:00:00Z"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "sort_field",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "sort_direction",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "A paginated list of all credit batches currently owned or retired on behalf of the organisation, sorted by issuance date. By default it excludes batches with the status 'split'.\n\nNote that when combining filters, the result will be the intersection of them. For example, when filtering by `supplier_id` and `issued_after`, the result will only include credit batches from the specified supplier that have been issued after the specified date."
+    },
+    {
+      "info": {
+        "name": "Current Supplier",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/supplier",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "The supplier currently authenticated.\n\nUse this endpoint to get your supplier_id and organisation_id."
+    },
+    {
+      "info": {
+        "name": "Supplier",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/suppliers/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "The organisation currently authenticated.\n\nUse this endpoint to get your organisation_id."
+    },
+    {
+      "info": {
+        "name": "Suppliers",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/suppliers",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Information about a specific supplier."
+    },
+    {
+      "info": {
+        "name": "Supplier Projects",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/suppliers/:id/projects",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "List of projects for a given supplier.\n\nProjects are sorted by most recently created first."
+    },
+    {
+      "info": {
+        "name": "Supplier Orders",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/suppliers/:id/orders",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "List of orders for a given supplier.\n\nOrders are sorted by most recently placed first."
+    },
+    {
+      "info": {
+        "name": "Supplier Deliveries",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/suppliers/:id/deliveries",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "List of deliveries for a given supplier.\n\nDeliveries are sorted by most recently delivered first."
+    },
+    {
+      "info": {
+        "name": "Supplier Issuances",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/suppliers/:id/issuances",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "List of issuances for a given supplier.\n\nIssuances are sorted by most recently created first."
+    },
+    {
+      "info": {
+        "name": "Project",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/projects/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Information about a specific project."
+    },
+    {
+      "info": {
+        "name": "Project Documents",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/projects/:id/documents",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "A paginated list of all project documents for the given project.\n\nReturned list of documents will be sorted alphabetically by document name."
+    },
+    {
+      "info": {
+        "name": "Projects",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/projects",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "A paginated list of all projects on Isometric's registry.\n\nReturned list of projects will be sorted alphabetically by project name."
+    },
+    {
+      "info": {
+        "name": "Issuance",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/issuances/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Information about a specific issuance."
+    },
+    {
+      "info": {
+        "name": "Issuances",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/issuances",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "A paginated list of all issuances in Isometric's registry.\n\nReturned list of issuances will be sorted by most recently issued first."
+    },
+    {
+      "info": {
+        "name": "Issuance Credit Batches",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/issuances/:id/credit_batches",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "List of credit batches for a given issuance.\n\nCredit batches are divided between those allocated to the buffer pool and those allocated to the supplier. Note these are the original batches in the issuance, so some credit batches might be in status SPLIT if they had to be split for a delivery/transfer/retirement."
+    },
+    {
+      "info": {
+        "name": "Deliveries",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/deliveries",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "from_supplier_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "to_organisation_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "A paginated list of all deliveries on Isometric's registry.\n\nReturned list of projects will be sorted by most recently delivered first."
+    },
+    {
+      "info": {
+        "name": "Create Delivery",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/registry/v0/deliveries",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Create a delivery against an order."
+    },
+    {
+      "info": {
+        "name": "Delivery",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/deliveries/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Information about a specific delivery."
+    },
+    {
+      "info": {
+        "name": "Delivery Credit Batches",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/deliveries/:id/credit_batches",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "List of credit batches for a given delivery.\n\nNote these are the original batches in the delivery, so some credit batches might be in status SPLIT if they had to be split for a transfer/retirement."
+    },
+    {
+      "info": {
+        "name": "Transfers",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/transfers",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "from_organisation_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "to_organisation_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "A paginated list of all transfers on Isometric's registry.\n\nReturned list of transfers will be sorted by most recently transferred first."
+    },
+    {
+      "info": {
+        "name": "Create Transfer",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/registry/v0/transfers",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Transfer credits from specific batches, in whole or with splits. All credit batches must originate from the same supplier and be owned by the current organisation."
+    },
+    {
+      "info": {
+        "name": "Transfer",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/transfers/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Information about a specific transfer."
+    },
+    {
+      "info": {
+        "name": "Transfer Credit Batches",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/transfers/:id/credit_batches",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "List of credit batches in a given transfer."
+    },
+    {
+      "info": {
+        "name": "Refund",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/refunds/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Information about a specific refund."
+    },
+    {
+      "info": {
+        "name": "Refund Credit Batches",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/refunds/:id/credit_batches",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "List of credit batches in a given refund."
+    },
+    {
+      "info": {
+        "name": "Retirements",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/retirements",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "beneficiary_org_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "owner_org_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "A paginated list of all retirements on Isometric's registry.\n\nReturned list of retirements will be sorted by most recently delivered first."
+    },
+    {
+      "info": {
+        "name": "Create Retirement",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/registry/v0/retirements",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Retire credits from specific batches, in whole or with splits. All credit batches must originate from the same supplier and be owned by the current organisation."
+    },
+    {
+      "info": {
+        "name": "Create Retirement From Oldest Credits",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/registry/v0/retirements/from_oldest_credits",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Retire oldest available credits from a given supplier. If vintage is specified, this will retire the oldest credits from that vintage only."
+    },
+    {
+      "info": {
+        "name": "Retirement",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/retirements/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Information about a specific retirement."
+    },
+    {
+      "info": {
+        "name": "Retirement Credit Batches",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/retirements/:id/credit_batches",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "List of credit batches for a given retirement."
+    },
+    {
+      "info": {
+        "name": "Order",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/orders/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Information about a specific order."
+    },
+    {
+      "info": {
+        "name": "Order Deliveries",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/orders/:id/deliveries",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          },
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "List of deliveries for a given order.\n\nDeliveries are sorted by most recently delivered first."
+    },
+    {
+      "info": {
+        "name": "Credit Batch",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/credit_batches/:id",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "id",
+            "value": "",
+            "type": "path"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Information about a specific credit batch."
+    },
+    {
+      "info": {
+        "name": "Beneficiaries",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/beneficiaries",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "A paginated list of Organisations which the currently authenticated organisation can retire credits on the behalf of, using the `POST /retirements` endpoint."
+    },
+    {
+      "info": {
+        "name": "Create Beneficiary",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/registry/v0/beneficiary",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Create a new beneficiary for your organization to retire on behalf of."
+    },
+    {
+      "info": {
+        "name": "Transferees",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/transferees",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "params": [
+          {
+            "name": "last",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "before",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "first",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "after",
+            "value": "",
+            "type": "query"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "A paginated list of Organisations which the currently authenticated organisation can transfer active credits to, using the `POST /transfers` endpoint."
+    },
+    {
+      "info": {
+        "name": "Create Stripe Checkout Session",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "/registry/v0/stripe/checkout",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "body": {
+          "type": "json",
+          "data": "{}"
+        },
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Create a Stripe Checkout Session for purchasing credits with Isometric verification.\nThis endpoint returns a Stripe Checkout URL to redirect the user to for completing the payment."
+    },
+    {
+      "info": {
+        "name": "Get Stripe Configuration",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "/registry/v0/stripe/configuration",
+        "headers": [
+          {
+            "name": "x-client-secret",
+            "value": ""
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "token": "{{bearerToken}}"
+        }
+      },
+      "docs": "Get Stripe configuration for the current organisation.\nThis will return 404 if the current organisation is not set up for Stripe Connect."
+    }
+  ],
+  "bundled": true
+}
