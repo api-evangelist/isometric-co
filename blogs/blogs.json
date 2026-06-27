@@ -3,19 +3,18 @@
   "feeds": [
     {
       "source": "https://isometric.com/writing",
-      "feed_url": "https://isometric.com/writing",
-      "title": "",
+      "feed_url": "",
       "saved": 0,
-      "method": "none"
+      "method": "agent-scrape"
     },
     {
       "source": "https://isometric.com/science-network-members",
-      "feed_url": "https://isometric.com/science-network-members",
-      "title": "",
+      "feed_url": "",
       "saved": 0,
-      "method": "none"
+      "method": "agent-scrape"
     }
   ],
-  "post_count": 1,
-  "fetched": "2026-06-14T20:42:17Z"
+  "post_count": 3,
+  "fetched": "2026-06-27T12:49:29Z",
+  "agent_pulled": "2026-06-27"
 }

@@ -179,7 +179,7 @@ common:
     url: https://registry.isometric.com/protocols
   - type: Protocols
     url: https://isometric.com/protocols
-  - type: Standard
+  - type: Standards
     url: https://registry.isometric.com/standard
   - type: Suppliers
     url: https://registry.isometric.com/suppliers
@@ -217,9 +217,9 @@ common:
     url: https://isometric.com/science-network-members
   - type: Blog
     url: https://isometric.com/writing
-  - type: SignIn
+  - type: Login
     url: https://registry.isometric.com/signin
-  - type: SignUp
+  - type: Signup
     url: https://registry.isometric.com/get-started
   - type: MCPServer
     url: https://docs.isometric.com/user-guides/general/mcp-server
