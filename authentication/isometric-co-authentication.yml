@@ -1,0 +1,16 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/isometric-certify-api-openapi.json, openapi/isometric-registry-api-openapi.json
+summary:
+  types:
+  - http
+schemes:
+- name: HTTPBearer
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  description: 'A JWT Bearer token header for authentication and authorization, in the format
+    `Authorization: Bearer <token>`'
+  sources:
+  - openapi/isometric-certify-api-openapi.json
+  - openapi/isometric-registry-api-openapi.json

@@ -149,6 +149,10 @@ apis:
       - type: Article
         url: https://isometric.com/writing-articles/increasing-transparency-in-carbon-markets-with-isometrics-api
 common:
+  - type: DomainSecurity
+    url: security/isometric-co-domain-security.yml
+  - type: Authentication
+    url: authentication/isometric-co-authentication.yml
   - type: Website
     url: https://isometric.com
   - type: Registry
