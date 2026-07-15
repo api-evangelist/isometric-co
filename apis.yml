@@ -149,6 +149,8 @@ apis:
       - type: Article
         url: https://isometric.com/writing-articles/increasing-transparency-in-carbon-markets-with-isometrics-api
 common:
+  - type: AgenticAccess
+    url: agentic-access/isometric-co-agentic-access.yml
   - type: DomainSecurity
     url: security/isometric-co-domain-security.yml
   - type: Authentication
