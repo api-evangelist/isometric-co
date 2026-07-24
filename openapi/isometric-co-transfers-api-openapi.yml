@@ -1,0 +1,715 @@
+openapi: 3.1.0
+info:
+  title: Isometric Certify Data Ingestion Beneficiaries Transfers API
+  description: "# Standards\n\n## Versioning\n\nThis API will be safely versioned using root path versioning, in the format `/v{major}`. For example, `/registry/v0/supplier`.\n\n### Compatibility\n\nWe won't make breaking changes to existing API services or endpoints for API versions higher than `v0`. If breaking changes are necessary, we'll release a new major version.\nWe may deprecate APIs that have been replaced by a newer version. When doing so, we will expect\nintegrated partners to manage a transition to new resources within the deprecation timeline of old ones.\n\nWe will make the following sort of changes we do not consider to be breaking:\n\n- Adding new endpoints\n- Adding optional query parameters to API endpoints\n- Adding new properties to existing API responses\n- Reordering properties in existing API responses\n\nIt is important that clients are built to be robust to these changes.\n\n## Pagination\n\nOur API is based on the [Relay](https://relay.dev/docs/tutorial/connections-pagination/) pagination spec. Paginated endpoints\nwill return a `PaginatedListResource` which contains:\n\n- `page_info` - Containing information regarding pagination cursors and the total number of entities.\n- `nodes` - Each node is a paginated entity.\n- `total_count` - The total size of the list across all pages.\n\n### Pagination Parameters\n\nPaginated endpoints also accepted a standard set of query parameters:\n\n- `last` - An integer number of items to retrieve **before** the item represented by the cursor passed in the `before` parameter. Defaults to 10 with a maximum value of 50.\n- `before` - An opaque cursor representing the first item in the previously requested page to select items ordered before it. Submit the previously requested page's `start_cursor` here when paginated backwards.\n- `first` - An integer number of items to retrieve **after** the item represented by the cursor passed in the `after` parameter. Defaults to 10 with a maximum value of 50.\n- `after` - An opaque cursor representing the last item in the previously requested page to select items ordered after it. Submit the previously requested page's `end_cursor` here when paginated forwards.\n\nFor example, querying `/registry/v0/beneficiaries` will return a `PaginatedListResource` of the first page of 10 items:\n\n```json\n{\n    \"page_info\": {\n        \"has_previous_page\": false,\n        \"start_cursor\": ...,\n        \"has_next_page\": true,\n        \"end_cursor\": \"mpG5kcuoFBYtlH\",\n    },\n    \"nodes\": [{\n        \"id\": \"org_12345iso678\",\n        \"name\": \"My Org\",\n        ...\n    }],\n    \"total_count\": 100\n}\n```\n\nThen querying `/registry/v0/beneficiaries?first=15&after=mpG5kcuoFBYtlH` will return a `PaginatedListResource` of the next 15 items.\n\n## Dates\n\nDatetime fields in the APIs conform to the [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date and time format in UTC. For example: `2024-01-22T11:56:48.520641Z`.\n\n## Country Codes\n\nCountries are identified in the APIs via [ISO 3166-1 Alpha-3](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3) codes. For example: `GBR` and `USA`.\n# Authentication\n\nMost API requests will need to authenticate against the Isometric API in two ways simultaneously:\n\n- By passing a **client secret** in the `X-Client-Secret` header to identify the system integrating with the API.\n- By passing an **access token** in the `Authorization` header to authenticate as a specific organization, in order to gain access to its private data.\n\n### Client Authentication\n\nEvery API call to Isometric must include a **client secret** identifying the client application.\n\nThis client secret is tied to a particular environment - sandbox or production.\n\nThe client secret should be submitted on every API request via the `X-Client-Secret` header. For example `X-Client-Secret: uPrO...wxAh`.\n\n### Organization Authentication\n\nIn addition, a large number of API requests will require an **access token** in order for the caller to identify themselves and act as a specific Organization.\n\nTo authenticate as an Organization you will need to submit a JWT bearer access token via the `Authorization` header. For example: `Authorization: Bearer eyJh...sw5c`.\nIf you are going to be acting on behalf of other Organizations, they will need to generate the access token and pass it securely to you.\nAccess tokens should be treated as highly sensitive, kept secret and stored accordingly.\n\nAccess tokens are scoped to a single Organization - so if you are acting on behalf of multiple particular organizations, you will need to submit the appropriate access token on each request.\n\n### Managing Credentials\n\nCredentials can be managed through Certify UI in the [Team settings](https://registry.isometric.com/account/team-settings) section. Access tokens will expire after 1 year from generation. When you are approaching expiry, a new token will need to be generated.\n\nBoth client secrets and access tokens can be created and invalidated through UI.\nClient secrets do not expire and do not need to be rotated.\nIf either secret becomes compromised, it should be invalidated through the UI.\n# Key Certify Concepts\n\nThis page defines concepts used in Certify, and the [Certify API](/api-reference/certify/certify-introduction), which are helpful to understand when submitting information for verification via Certify. For a broader understanding of Isometric's verification processes on the Isometric Registry, please refer to the [Isometric Standard](https://isometric.com/standard).\n\n## Resource visibility\n\n- Until resources are submitted as part of a GHG statement, they are visible only to members of your organization.\n- After statement submission, they are visible to the verifier assigned to the GHG statement.\n- Once credits have been issued, removals are added to the [public registry](https://registry.isometric.com), and associated resources are visible publicly, with the exception of source documents.\n- Sources uploaded in the Certify platform are kept private by default once published on the Isometric registry (file names will be displayed). Contact Isometric to update public source visibility. Sources [added via the API](/api-reference/certify/post-source) can be set `public` on submission.\n\n## Resources\n\nThe main resources used in Certify are sources, datapoints, components and removals.\n\n### Sources\n\n- Sources represent a piece of evidence for a particular datapoint used in carbon accounting calculations.\n- Source documents are private, and only shared with the verifier assigned to a related removal.\n- Other information associated with a source, such as its display name, is visible publicly once the removal is on the public registry.\n- Verifiers are not notified when new sources are added to datapoints in a submitted removal, but they will immediately have access to the source documentation. Please notify the Isometric Registry Operations team when sources are added on a verifier's request so that we can ensure that the verifier is aware.\n\n### Datapoints\n\n- Datapoints represent any value used in carbon accounting calculations.\n- When creating datapoints, sources should be referenced to provide evidence for the value used.\n- A standard deviation should be provided if the datapoint is to be included in the variance propagation method of uncertainty analysis.\n- All datapoints are considered statistically independent for the purpose of variance propagation, although if a datapoint is used twice within a removal calculation, this dependence is captured.\n\n### Components\n\n- Components represent physical activities whose CO₂e flux needs to be accounted for.\n- Components are created from [component blueprints](/user-guides/certify/component-blueprint-library) that contain sets of equations used to calculate a transfer of CO₂e into or out of the atmosphere.\n- A blueprint defines a set of inputs that are the datapoints to be used in the calculation. For instance, a transport emissions blueprints would ask for datapoints representing a distance, mass and carbon intensity.\n- When creating a component from a blueprint, the blueprint must be specified, as well as a list of datapoints for the expected blueprint inputs. Learn more about components in [Identifying Components](/user-guides/certify/identifying-components).\n\n### Removals\n\n- Removals represent a series of activities that result in CO₂e being removed from the atmosphere.\n- The carbon accounting of a removal typically contains sequestrations, counterfactuals and activities (emissions).\n- Removals are structured using a template, [defined in your LCA](/user-guides/certify/lca).\n- Templates are divided into component groups. For instance, a biochar template may contain a `Feedstock sourcing` group.\n- Groups can contain multiple components.\n- Components can also be partially attributed to removals, if the activity the component represents contributed to multiple removals.\n- The final uncertainty discounting is done on the removal level - the API will return the CO₂e removed with and without discounting.\n- See the [Create a removal](/user-guides/certify/removal) guide for more details.\n\n### Feedstock types\n\n- Many carbon removal methods involve a feedstock, for instance biomass feedstock in BiCRS or silicate rock in enhanced weathering.\n- Feedstock types are used to describe the feedstock used in a removal.\n- When creating a removal, a feedstock type can be optionally specified so that Isometric and verifiers can see which removals use which feedstocks.\n- This is important if different feedstocks are used in a single GHG statement.\n- See the [Add feedstock](/user-guides/certify/add-feedstock) guide for more details.\n"
+  version: v0
+servers:
+- url: /mrv/v0
+- url: https://api.sandbox.isometric.com/mrv/v0
+  description: Sandbox Isometric MRV API
+- url: https://api.isometric.com/mrv/v0
+  description: Production Isometric MRV API
+tags:
+- name: Transfers
+paths:
+  /transfers:
+    post:
+      summary: Create Transfer
+      description: Transfer credits from specific batches, in whole or with splits. All credit batches must originate from the same supplier and be owned by the current organisation.
+      operationId: create_transfer_transfers_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: x-client-secret
+        in: header
+        required: true
+        schema:
+          type: string
+          title: Client secret
+          description: A secret token identifying the client connecting to the API
+          examples:
+          - Syou3EZiO5vuMEgNyBeA8cjEMYOnQDwP
+        description: A secret token identifying the client connecting to the API
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransferRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transfer'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Transfers
+    get:
+      summary: Transfers
+      description: 'A paginated list of all transfers on Isometric''s registry.
+
+
+        Returned list of transfers will be sorted by most recently transferred first.'
+      operationId: transfers_transfers_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: from_organisation_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/IsometricIDQueryParam_Organisation_'
+          - type: 'null'
+          title: From Organisation Id
+      - name: to_organisation_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/IsometricIDQueryParam_Organisation_'
+          - type: 'null'
+          title: To Organisation Id
+      - name: last
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          exclusiveMinimum: 0
+          description: An integer number of items to retrieve before the item represented by the cursor passed in the before parameter. Defaults to 10 with a maximum value of 50.
+          default: 10
+          title: Last
+      - name: before
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          description: An opaque cursor representing the first item in the previously requested page to select items ordered before it. Submit the previously requested page’s start_cursor here when paginated backwards.
+          title: Before
+      - name: first
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          exclusiveMinimum: 0
+          description: An integer number of items to retrieve after the item represented by the cursor passed in the after parameter. Defaults to 10 with a maximum value of 50.
+          default: 10
+          title: First
+      - name: after
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          description: An opaque cursor representing the last item in the previously requested page to select items ordered after it. Submit the previously requested page’s end_cursor here when paginated forwards.
+          title: After
+      - name: x-client-secret
+        in: header
+        required: true
+        schema:
+          type: string
+          title: Client secret
+          description: A secret token identifying the client connecting to the API
+          examples:
+          - Syou3EZiO5vuMEgNyBeA8cjEMYOnQDwP
+        description: A secret token identifying the client connecting to the API
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedListResource_Transfer_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Transfers
+  /transfers/{id}:
+    get:
+      summary: Transfer
+      description: Information about a specific transfer.
+      operationId: transfer_transfers__id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/IsometricIDPathParam_Transfer_'
+      - name: x-client-secret
+        in: header
+        required: true
+        schema:
+          type: string
+          title: Client secret
+          description: A secret token identifying the client connecting to the API
+          examples:
+          - Syou3EZiO5vuMEgNyBeA8cjEMYOnQDwP
+        description: A secret token identifying the client connecting to the API
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transfer'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Transfers
+  /transfers/{id}/credit_batches:
+    get:
+      summary: Transfer Credit Batches
+      description: List of credit batches in a given transfer.
+      operationId: transfer_credit_batches_transfers__id__credit_batches_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/IsometricIDPathParam_Transfer_'
+      - name: x-client-secret
+        in: header
+        required: true
+        schema:
+          type: string
+          title: Client secret
+          description: A secret token identifying the client connecting to the API
+          examples:
+          - Syou3EZiO5vuMEgNyBeA8cjEMYOnQDwP
+        description: A secret token identifying the client connecting to the API
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListResource_CreditBatch_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Transfers
+components:
+  schemas:
+    Organisation:
+      properties:
+        id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Id
+          examples:
+          - org_1GB56M1ST1S0GVNA
+          - org_1CP8EQDNQSBXTMR2
+          example: org_1GB56M1ST1S0GVNA
+        name:
+          type: string
+          title: Name
+          examples:
+          - Isometric
+        domain:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Domain
+          examples:
+          - isometric.com
+      type: object
+      required:
+      - id
+      - name
+      - domain
+      title: Organisation
+    CreateTransferRequest:
+      properties:
+        credit_batch_quantities:
+          items:
+            $ref: '#/components/schemas/CreditBatchQuantity'
+          type: array
+          title: Credit Batch Quantities
+          description: A list of credit batch IDs and kilogram amounts of each to transfer.
+        from_organisation_id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: From Organisation Id
+          description: The ID of the organisation that is sending the credits. Typically this would be your own organisation ID.
+          examples:
+          - org_1GB56M1ST1S0GVNA
+          - org_1CP8EQDNQSBXTMR2
+          example: org_1GB56M1ST1S0GVNA
+        to_organisation_id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: To Organisation Id
+          description: The ID of the organisation that will receive the credits.
+          examples:
+          - org_1GB56M1ST1S0GVNA
+          - org_1CP8EQDNQSBXTMR2
+          example: org_1GB56M1ST1S0GVNA
+        supplier_id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Supplier Id
+          description: All credits in a transfer must originate from the same supplier.
+          examples:
+          - spl_1CC712KFS1S0YKPS
+          - spl_1FJBMMGR3SBXKDME
+          example: spl_1CC712KFS1S0YKPS
+        notes:
+          anyOf:
+          - type: string
+            maxLength: 256
+          - type: 'null'
+          title: Notes
+          description: A publicly visible note stored with the credit transfer.
+          examples:
+          - Transferred with care.
+      type: object
+      required:
+      - credit_batch_quantities
+      - from_organisation_id
+      - to_organisation_id
+      - supplier_id
+      - notes
+      title: CreateTransferRequest
+    IsometricIDRequestParam_Organisation_:
+      type: string
+      maxLength: 37
+      minLength: 20
+      examples:
+      - org_1GB56M1ST1S0GVNA
+      - org_1CP8EQDNQSBXTMR2
+      example: org_1GB56M1ST1S0GVNA
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    IsometricIDRequestParam_Transfer_:
+      type: string
+      maxLength: 37
+      minLength: 20
+      examples:
+      - tfr_1FJGWSY271S0QSMR
+      - tfr_1FAG5BDW1SBXJ1CH
+      example: tfr_1FJGWSY271S0QSMR
+    PageInfo:
+      properties:
+        has_previous_page:
+          type: boolean
+          title: Has Previous Page
+        start_cursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Start Cursor
+        has_next_page:
+          type: boolean
+          title: Has Next Page
+        end_cursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: End Cursor
+      type: object
+      required:
+      - has_previous_page
+      - start_cursor
+      - has_next_page
+      - end_cursor
+      title: PageInfo
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    Transfer:
+      properties:
+        id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Id
+          examples:
+          - tfr_1FJGWSY271S0QSMR
+          - tfr_1FAG5BDW1SBXJ1CH
+          example: tfr_1FJGWSY271S0QSMR
+        transferred_at:
+          type: string
+          format: date-time
+          title: Transferred At
+        from_organisation:
+          $ref: '#/components/schemas/Organisation'
+        to_organisation:
+          $ref: '#/components/schemas/Organisation'
+        credit_batch_size_total:
+          $ref: '#/components/schemas/CreditQuantity'
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+      type: object
+      required:
+      - id
+      - transferred_at
+      - from_organisation
+      - to_organisation
+      - credit_batch_size_total
+      - notes
+      title: Transfer
+    CreditQuantity:
+      properties:
+        credits:
+          type: number
+          title: Credits
+          description: A representation of the credit quantity as a fractional amount, to 3 decimal places. Where 1 unit represents 1 credit and 1 ton of CO₂e.
+          examples:
+          - 125.632
+        credit_kgs:
+          type: integer
+          title: Credit Kgs
+          description: A representation of the credit quantity as an integer kilogram amount. Where 1 unit represents 0.001 credits and 1 kilogram of CO₂e. This field can handle bigint values.
+          examples:
+          - 125632
+      type: object
+      required:
+      - credits
+      - credit_kgs
+      title: CreditQuantity
+    CreditBatch:
+      properties:
+        id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Id
+          examples:
+          - ctb_1DRBTYA8Q1S07CBY
+          - ctb_1CA2D3S73SBXYN70
+          example: ctb_1DRBTYA8Q1S07CBY
+        serial_number:
+          type: string
+          title: Serial Number
+          examples:
+          - ISO-1-BSTORE-GBR-F5X7-2024-78177-81177
+        status:
+          $ref: '#/components/schemas/CreditBatchStatus'
+        size:
+          $ref: '#/components/schemas/CreditQuantity'
+        issued_at:
+          type: string
+          format: date-time
+          title: Issued At
+        retired_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Retired At
+        delivered_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Delivered At
+        sequestered_on:
+          type: string
+          format: date
+          title: Sequestered On
+        country_of_issue:
+          type: string
+          maxLength: 3
+          minLength: 3
+          title: Country Of Issue
+          examples:
+          - GBR
+        supplier_id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Supplier Id
+          examples:
+          - spl_1CC712KFS1S0YKPS
+          - spl_1FJBMMGR3SBXKDME
+          example: spl_1CC712KFS1S0YKPS
+        parent_id:
+          anyOf:
+          - type: string
+            maxLength: 37
+            minLength: 20
+            examples:
+            - ctb_1DRBTYA8Q1S07CBY
+            - ctb_1CA2D3S73SBXYN70
+            example: ctb_1DRBTYA8Q1S07CBY
+          - type: 'null'
+          title: Parent Id
+          description: If this credit batch was created from splitting a larger batch in two, this will be set to the id of the parent credit batch.
+        left_child_id:
+          anyOf:
+          - type: string
+            maxLength: 37
+            minLength: 20
+            examples:
+            - ctb_1DRBTYA8Q1S07CBY
+            - ctb_1CA2D3S73SBXYN70
+            example: ctb_1DRBTYA8Q1S07CBY
+          - type: 'null'
+          title: Left Child Id
+          description: If this credit batch has status `SPLIT`, it will have two child batches representing the two halves of this split.
+        right_child_id:
+          anyOf:
+          - type: string
+            maxLength: 37
+            minLength: 20
+            examples:
+            - ctb_1DRBTYA8Q1S07CBY
+            - ctb_1CA2D3S73SBXYN70
+            example: ctb_1DRBTYA8Q1S07CBY
+          - type: 'null'
+          title: Right Child Id
+          description: If this credit batch has status `SPLIT`, it will have two child batches representing the two halves of this split.
+        issuance_id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Issuance Id
+          examples:
+          - iss_1EWT8R5FY1S0GFCY
+          - iss_1CSVDDHH3SBXRP6K
+          example: iss_1EWT8R5FY1S0GFCY
+        delivery_id:
+          anyOf:
+          - type: string
+            maxLength: 37
+            minLength: 20
+            examples:
+            - dlv_1C454ZXA61S03Z9T
+            - dlv_1FAGG2H2PSBXHGYY
+            example: dlv_1C454ZXA61S03Z9T
+          - type: 'null'
+          title: Delivery Id
+        beneficiary:
+          anyOf:
+          - $ref: '#/components/schemas/Organisation'
+          - type: 'null'
+        retirement_id:
+          anyOf:
+          - type: string
+            maxLength: 37
+            minLength: 20
+            examples:
+            - ret_1FYBH4QDT1S0SVKF
+            - ret_1CGV2XADRSBX1CHB
+            example: ret_1FYBH4QDT1S0SVKF
+          - type: 'null'
+          title: Retirement Id
+        removal_id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Removal Id
+          examples:
+          - rmv_1EEM6NJXX1S0EXKD
+          - rmv_1E3V4J2EWSBX5E82
+          example: rmv_1EEM6NJXX1S0EXKD
+        owner:
+          $ref: '#/components/schemas/Organisation'
+        project_id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Project Id
+          examples:
+          - prj_1CTWZQGKE1S0VAXA
+          - prj_1E0QTWB22SBX34D1
+          example: prj_1CTWZQGKE1S0VAXA
+        carbon_removal_data:
+          anyOf:
+          - $ref: '#/components/schemas/CarbonRemovalData'
+          - type: 'null'
+          description: Carbon removal data for this credit batch
+        ccp_approved:
+          type: boolean
+          title: CCP Approved
+          description: Whether this credit batch has been issued as part of a ICVCM Core Carbon Principles (CCP) approved project
+      type: object
+      required:
+      - id
+      - serial_number
+      - status
+      - size
+      - issued_at
+      - retired_at
+      - delivered_at
+      - sequestered_on
+      - country_of_issue
+      - supplier_id
+      - parent_id
+      - left_child_id
+      - right_child_id
+      - issuance_id
+      - delivery_id
+      - beneficiary
+      - retirement_id
+      - removal_id
+      - owner
+      - project_id
+      - carbon_removal_data
+      - ccp_approved
+      title: CreditBatch
+    ListResource_CreditBatch_:
+      properties:
+        nodes:
+          items:
+            $ref: '#/components/schemas/CreditBatch'
+          type: array
+          title: Nodes
+        total_count:
+          type: integer
+          title: Total Count
+      type: object
+      required:
+      - nodes
+      - total_count
+      title: ListResource[CreditBatch]
+    CreditBatchQuantity:
+      properties:
+        credit_batch_id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Credit Batch Id
+          examples:
+          - ctb_1DRBTYA8Q1S07CBY
+          - ctb_1CA2D3S73SBXYN70
+          example: ctb_1DRBTYA8Q1S07CBY
+        credit_quantity_kg:
+          type: integer
+          exclusiveMinimum: 0.0
+          title: Credit Quantity Kg
+          description: A representation of a credit quantity as an **integer kilogram amount**. Where **1 unit represents 0.001 credits** and 1 kilogram of CO₂e. This field can handle bigint values.
+          examples:
+          - 1000
+      type: object
+      required:
+      - credit_batch_id
+      - credit_quantity_kg
+      title: CreditBatchQuantity
+    IsometricIDPathParam_Transfer_:
+      $ref: '#/components/schemas/IsometricIDRequestParam_Transfer_'
+    CreditBatchStatus:
+      type: string
+      enum:
+      - active
+      - split
+      - retired
+      title: CreditBatchStatus
+    IsometricIDQueryParam_Organisation_:
+      $ref: '#/components/schemas/IsometricIDRequestParam_Organisation_'
+    PaginatedListResource_Transfer_:
+      properties:
+        nodes:
+          items:
+            $ref: '#/components/schemas/Transfer'
+          type: array
+          title: Nodes
+        total_count:
+          type: integer
+          title: Total Count
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      type: object
+      required:
+      - nodes
+      - total_count
+      - page_info
+      title: PaginatedListResource[Transfer]
+    CarbonRemovalData:
+      properties:
+        gross_carbon_removed_kg:
+          type: integer
+          title: Gross Carbon Removed Kg
+        net_carbon_removed_kg:
+          type: integer
+          title: Net Carbon Removed Kg
+        emissions_kg:
+          type: integer
+          title: Emissions Kg
+        counterfactuals_kg:
+          type: integer
+          title: Counterfactuals Kg
+        losses_kg:
+          type: integer
+          title: Losses Kg
+      type: object
+      required:
+      - gross_carbon_removed_kg
+      - net_carbon_removed_kg
+      - emissions_kg
+      - counterfactuals_kg
+      - losses_kg
+      title: CarbonRemovalData
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      description: 'A JWT Bearer token header for authentication and authorization, in the format `Authorization: Bearer <token>`'
+      scheme: bearer
+      bearerFormat: JWT

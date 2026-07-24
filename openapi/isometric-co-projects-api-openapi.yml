@@ -1,0 +1,2236 @@
+openapi: 3.1.0
+info:
+  title: Isometric Certify Data Ingestion Beneficiaries Projects API
+  description: "# Standards\n\n## Versioning\n\nThis API will be safely versioned using root path versioning, in the format `/v{major}`. For example, `/registry/v0/supplier`.\n\n### Compatibility\n\nWe won't make breaking changes to existing API services or endpoints for API versions higher than `v0`. If breaking changes are necessary, we'll release a new major version.\nWe may deprecate APIs that have been replaced by a newer version. When doing so, we will expect\nintegrated partners to manage a transition to new resources within the deprecation timeline of old ones.\n\nWe will make the following sort of changes we do not consider to be breaking:\n\n- Adding new endpoints\n- Adding optional query parameters to API endpoints\n- Adding new properties to existing API responses\n- Reordering properties in existing API responses\n\nIt is important that clients are built to be robust to these changes.\n\n## Pagination\n\nOur API is based on the [Relay](https://relay.dev/docs/tutorial/connections-pagination/) pagination spec. Paginated endpoints\nwill return a `PaginatedListResource` which contains:\n\n- `page_info` - Containing information regarding pagination cursors and the total number of entities.\n- `nodes` - Each node is a paginated entity.\n- `total_count` - The total size of the list across all pages.\n\n### Pagination Parameters\n\nPaginated endpoints also accepted a standard set of query parameters:\n\n- `last` - An integer number of items to retrieve **before** the item represented by the cursor passed in the `before` parameter. Defaults to 10 with a maximum value of 50.\n- `before` - An opaque cursor representing the first item in the previously requested page to select items ordered before it. Submit the previously requested page's `start_cursor` here when paginated backwards.\n- `first` - An integer number of items to retrieve **after** the item represented by the cursor passed in the `after` parameter. Defaults to 10 with a maximum value of 50.\n- `after` - An opaque cursor representing the last item in the previously requested page to select items ordered after it. Submit the previously requested page's `end_cursor` here when paginated forwards.\n\nFor example, querying `/registry/v0/beneficiaries` will return a `PaginatedListResource` of the first page of 10 items:\n\n```json\n{\n    \"page_info\": {\n        \"has_previous_page\": false,\n        \"start_cursor\": ...,\n        \"has_next_page\": true,\n        \"end_cursor\": \"mpG5kcuoFBYtlH\",\n    },\n    \"nodes\": [{\n        \"id\": \"org_12345iso678\",\n        \"name\": \"My Org\",\n        ...\n    }],\n    \"total_count\": 100\n}\n```\n\nThen querying `/registry/v0/beneficiaries?first=15&after=mpG5kcuoFBYtlH` will return a `PaginatedListResource` of the next 15 items.\n\n## Dates\n\nDatetime fields in the APIs conform to the [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date and time format in UTC. For example: `2024-01-22T11:56:48.520641Z`.\n\n## Country Codes\n\nCountries are identified in the APIs via [ISO 3166-1 Alpha-3](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3) codes. For example: `GBR` and `USA`.\n# Authentication\n\nMost API requests will need to authenticate against the Isometric API in two ways simultaneously:\n\n- By passing a **client secret** in the `X-Client-Secret` header to identify the system integrating with the API.\n- By passing an **access token** in the `Authorization` header to authenticate as a specific organization, in order to gain access to its private data.\n\n### Client Authentication\n\nEvery API call to Isometric must include a **client secret** identifying the client application.\n\nThis client secret is tied to a particular environment - sandbox or production.\n\nThe client secret should be submitted on every API request via the `X-Client-Secret` header. For example `X-Client-Secret: uPrO...wxAh`.\n\n### Organization Authentication\n\nIn addition, a large number of API requests will require an **access token** in order for the caller to identify themselves and act as a specific Organization.\n\nTo authenticate as an Organization you will need to submit a JWT bearer access token via the `Authorization` header. For example: `Authorization: Bearer eyJh...sw5c`.\nIf you are going to be acting on behalf of other Organizations, they will need to generate the access token and pass it securely to you.\nAccess tokens should be treated as highly sensitive, kept secret and stored accordingly.\n\nAccess tokens are scoped to a single Organization - so if you are acting on behalf of multiple particular organizations, you will need to submit the appropriate access token on each request.\n\n### Managing Credentials\n\nCredentials can be managed through Certify UI in the [Team settings](https://registry.isometric.com/account/team-settings) section. Access tokens will expire after 1 year from generation. When you are approaching expiry, a new token will need to be generated.\n\nBoth client secrets and access tokens can be created and invalidated through UI.\nClient secrets do not expire and do not need to be rotated.\nIf either secret becomes compromised, it should be invalidated through the UI.\n# Key Certify Concepts\n\nThis page defines concepts used in Certify, and the [Certify API](/api-reference/certify/certify-introduction), which are helpful to understand when submitting information for verification via Certify. For a broader understanding of Isometric's verification processes on the Isometric Registry, please refer to the [Isometric Standard](https://isometric.com/standard).\n\n## Resource visibility\n\n- Until resources are submitted as part of a GHG statement, they are visible only to members of your organization.\n- After statement submission, they are visible to the verifier assigned to the GHG statement.\n- Once credits have been issued, removals are added to the [public registry](https://registry.isometric.com), and associated resources are visible publicly, with the exception of source documents.\n- Sources uploaded in the Certify platform are kept private by default once published on the Isometric registry (file names will be displayed). Contact Isometric to update public source visibility. Sources [added via the API](/api-reference/certify/post-source) can be set `public` on submission.\n\n## Resources\n\nThe main resources used in Certify are sources, datapoints, components and removals.\n\n### Sources\n\n- Sources represent a piece of evidence for a particular datapoint used in carbon accounting calculations.\n- Source documents are private, and only shared with the verifier assigned to a related removal.\n- Other information associated with a source, such as its display name, is visible publicly once the removal is on the public registry.\n- Verifiers are not notified when new sources are added to datapoints in a submitted removal, but they will immediately have access to the source documentation. Please notify the Isometric Registry Operations team when sources are added on a verifier's request so that we can ensure that the verifier is aware.\n\n### Datapoints\n\n- Datapoints represent any value used in carbon accounting calculations.\n- When creating datapoints, sources should be referenced to provide evidence for the value used.\n- A standard deviation should be provided if the datapoint is to be included in the variance propagation method of uncertainty analysis.\n- All datapoints are considered statistically independent for the purpose of variance propagation, although if a datapoint is used twice within a removal calculation, this dependence is captured.\n\n### Components\n\n- Components represent physical activities whose CO₂e flux needs to be accounted for.\n- Components are created from [component blueprints](/user-guides/certify/component-blueprint-library) that contain sets of equations used to calculate a transfer of CO₂e into or out of the atmosphere.\n- A blueprint defines a set of inputs that are the datapoints to be used in the calculation. For instance, a transport emissions blueprints would ask for datapoints representing a distance, mass and carbon intensity.\n- When creating a component from a blueprint, the blueprint must be specified, as well as a list of datapoints for the expected blueprint inputs. Learn more about components in [Identifying Components](/user-guides/certify/identifying-components).\n\n### Removals\n\n- Removals represent a series of activities that result in CO₂e being removed from the atmosphere.\n- The carbon accounting of a removal typically contains sequestrations, counterfactuals and activities (emissions).\n- Removals are structured using a template, [defined in your LCA](/user-guides/certify/lca).\n- Templates are divided into component groups. For instance, a biochar template may contain a `Feedstock sourcing` group.\n- Groups can contain multiple components.\n- Components can also be partially attributed to removals, if the activity the component represents contributed to multiple removals.\n- The final uncertainty discounting is done on the removal level - the API will return the CO₂e removed with and without discounting.\n- See the [Create a removal](/user-guides/certify/removal) guide for more details.\n\n### Feedstock types\n\n- Many carbon removal methods involve a feedstock, for instance biomass feedstock in BiCRS or silicate rock in enhanced weathering.\n- Feedstock types are used to describe the feedstock used in a removal.\n- When creating a removal, a feedstock type can be optionally specified so that Isometric and verifiers can see which removals use which feedstocks.\n- This is important if different feedstocks are used in a single GHG statement.\n- See the [Add feedstock](/user-guides/certify/add-feedstock) guide for more details.\n"
+  version: v0
+servers:
+- url: /mrv/v0
+- url: https://api.sandbox.isometric.com/mrv/v0
+  description: Sandbox Isometric MRV API
+- url: https://api.isometric.com/mrv/v0
+  description: Production Isometric MRV API
+tags:
+- name: Projects
+paths:
+  /projects/{project_id}/removal_templates:
+    get:
+      summary: Get Removal Templates
+      description: Lists all removal templates within the given project
+      operationId: get_removal_templates_projects__project_id__removal_templates_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/IsometricIDPathParam_Project_'
+      - name: last
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          exclusiveMinimum: 0
+          description: An integer number of items to retrieve before the item represented by the cursor passed in the before parameter. Defaults to 10 with a maximum value of 50.
+          default: 10
+          title: Last
+      - name: before
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          description: An opaque cursor representing the first item in the previously requested page to select items ordered before it. Submit the previously requested page’s start_cursor here when paginated backwards.
+          title: Before
+      - name: first
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          exclusiveMinimum: 0
+          description: An integer number of items to retrieve after the item represented by the cursor passed in the after parameter. Defaults to 10 with a maximum value of 50.
+          default: 10
+          title: First
+      - name: after
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          description: An opaque cursor representing the last item in the previously requested page to select items ordered after it. Submit the previously requested page’s end_cursor here when paginated forwards.
+          title: After
+      - name: x-client-secret
+        in: header
+        required: true
+        schema:
+          type: string
+          title: Client secret
+          description: A secret token identifying the client connecting to the API
+          examples:
+          - Syou3EZiO5vuMEgNyBeA8cjEMYOnQDwP
+        description: A secret token identifying the client connecting to the API
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedListResource_RemovalTemplate_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Projects
+  /projects/{project_id}/removal_templates/{id}:
+    get:
+      summary: Get Removal Template
+      description: Gets a single removal template within the given project
+      operationId: get_removal_template_projects__project_id__removal_templates__id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/IsometricIDPathParam_Project_'
+      - name: id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/IsometricIDPathParam_GhgEntryTemplate_'
+      - name: x-client-secret
+        in: header
+        required: true
+        schema:
+          type: string
+          title: Client secret
+          description: A secret token identifying the client connecting to the API
+          examples:
+          - Syou3EZiO5vuMEgNyBeA8cjEMYOnQDwP
+        description: A secret token identifying the client connecting to the API
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RemovalTemplate'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Projects
+  /projects:
+    get:
+      summary: Get Projects
+      description: Lists projects in the Isometric system
+      operationId: get_projects_projects_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: last
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          exclusiveMinimum: 0
+          description: An integer number of items to retrieve before the item represented by the cursor passed in the before parameter. Defaults to 10 with a maximum value of 50.
+          default: 10
+          title: Last
+      - name: before
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          description: An opaque cursor representing the first item in the previously requested page to select items ordered before it. Submit the previously requested page’s start_cursor here when paginated backwards.
+          title: Before
+      - name: first
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          exclusiveMinimum: 0
+          description: An integer number of items to retrieve after the item represented by the cursor passed in the after parameter. Defaults to 10 with a maximum value of 50.
+          default: 10
+          title: First
+      - name: after
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          description: An opaque cursor representing the last item in the previously requested page to select items ordered after it. Submit the previously requested page’s end_cursor here when paginated forwards.
+          title: After
+      - name: x-client-secret
+        in: header
+        required: true
+        schema:
+          type: string
+          title: Client secret
+          description: A secret token identifying the client connecting to the API
+          examples:
+          - Syou3EZiO5vuMEgNyBeA8cjEMYOnQDwP
+        description: A secret token identifying the client connecting to the API
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedListResource_Project_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Projects
+  /projects/{project_id}/storage_locations/{id}/monitoring_requirements:
+    get:
+      summary: Get Project Storage Location Monitoring Requirements
+      description: Lists all monitoring requirements for a project storage location.
+      operationId: get_project_storage_location_monitoring_requirements_projects__project_id__storage_locations__id__monitoring_requirements_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/IsometricIDPathParam_Project_'
+      - name: id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/IsometricIDPathParam_StorageLocation_'
+      - name: last
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          exclusiveMinimum: 0
+          description: An integer number of items to retrieve before the item represented by the cursor passed in the before parameter. Defaults to 10 with a maximum value of 50.
+          default: 10
+          title: Last
+      - name: before
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          description: An opaque cursor representing the first item in the previously requested page to select items ordered before it. Submit the previously requested page’s start_cursor here when paginated backwards.
+          title: Before
+      - name: first
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          exclusiveMinimum: 0
+          description: An integer number of items to retrieve after the item represented by the cursor passed in the after parameter. Defaults to 10 with a maximum value of 50.
+          default: 10
+          title: First
+      - name: after
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          description: An opaque cursor representing the last item in the previously requested page to select items ordered after it. Submit the previously requested page’s end_cursor here when paginated forwards.
+          title: After
+      - name: x-client-secret
+        in: header
+        required: true
+        schema:
+          type: string
+          title: Client secret
+          description: A secret token identifying the client connecting to the API
+          examples:
+          - Syou3EZiO5vuMEgNyBeA8cjEMYOnQDwP
+        description: A secret token identifying the client connecting to the API
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedListResource_ProjectMonitoringRequirement_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Projects
+  /projects/{id}/monitoring_requirements:
+    get:
+      summary: Get Project Monitoring Requirements
+      description: Lists all monitoring requirements for a project.
+      operationId: get_project_monitoring_requirements_projects__id__monitoring_requirements_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/IsometricIDPathParam_Project_'
+      - name: storage_location_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/IsometricIDQueryParam_StorageLocation_'
+          - type: 'null'
+          title: Storage Location Id
+      - name: storage_unit_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/IsometricIDQueryParam_StorageUnit_'
+          - type: 'null'
+          title: Storage Unit Id
+      - name: last
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          exclusiveMinimum: 0
+          description: An integer number of items to retrieve before the item represented by the cursor passed in the before parameter. Defaults to 10 with a maximum value of 50.
+          default: 10
+          title: Last
+      - name: before
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          description: An opaque cursor representing the first item in the previously requested page to select items ordered before it. Submit the previously requested page’s start_cursor here when paginated backwards.
+          title: Before
+      - name: first
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          exclusiveMinimum: 0
+          description: An integer number of items to retrieve after the item represented by the cursor passed in the after parameter. Defaults to 10 with a maximum value of 50.
+          default: 10
+          title: First
+      - name: after
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          description: An opaque cursor representing the last item in the previously requested page to select items ordered after it. Submit the previously requested page’s end_cursor here when paginated forwards.
+          title: After
+      - name: x-client-secret
+        in: header
+        required: true
+        schema:
+          type: string
+          title: Client secret
+          description: A secret token identifying the client connecting to the API
+          examples:
+          - Syou3EZiO5vuMEgNyBeA8cjEMYOnQDwP
+        description: A secret token identifying the client connecting to the API
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedListResource_ProjectMonitoringRequirement_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Projects
+  /projects/{project_id}/monitoring_requirements/{requirement_id}:
+    get:
+      summary: Get Project Monitoring Requirement
+      description: Get a specific monitoring requirement within a project.
+      operationId: get_project_monitoring_requirement_projects__project_id__monitoring_requirements__requirement_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/IsometricIDPathParam_Project_'
+      - name: requirement_id
+        in: path
+        required: true
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/IsometricIDPathParam_MonitoringRequirement_'
+          - $ref: '#/components/schemas/IsometricIDPathParam_ProjectRequirement_'
+          title: Requirement Id
+      - name: x-client-secret
+        in: header
+        required: true
+        schema:
+          type: string
+          title: Client secret
+          description: A secret token identifying the client connecting to the API
+          examples:
+          - Syou3EZiO5vuMEgNyBeA8cjEMYOnQDwP
+        description: A secret token identifying the client connecting to the API
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectMonitoringRequirement'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Projects
+  /projects/{project_id}/monitoring_requirements/{id}/submissions:
+    get:
+      summary: Get Monitoring Submissions
+      description: Lists all monitoring submissions for a project monitoring requirement
+      operationId: get_monitoring_submissions_projects__project_id__monitoring_requirements__id__submissions_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/IsometricIDPathParam_Project_'
+      - name: id
+        in: path
+        required: true
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/IsometricIDPathParam_MonitoringRequirement_'
+          - $ref: '#/components/schemas/IsometricIDPathParam_ProjectRequirement_'
+          title: Id
+      - name: last
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          exclusiveMinimum: 0
+          description: An integer number of items to retrieve before the item represented by the cursor passed in the before parameter. Defaults to 10 with a maximum value of 50.
+          default: 10
+          title: Last
+      - name: before
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          description: An opaque cursor representing the first item in the previously requested page to select items ordered before it. Submit the previously requested page’s start_cursor here when paginated backwards.
+          title: Before
+      - name: first
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          exclusiveMinimum: 0
+          description: An integer number of items to retrieve after the item represented by the cursor passed in the after parameter. Defaults to 10 with a maximum value of 50.
+          default: 10
+          title: First
+      - name: after
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          description: An opaque cursor representing the last item in the previously requested page to select items ordered after it. Submit the previously requested page’s end_cursor here when paginated forwards.
+          title: After
+      - name: x-client-secret
+        in: header
+        required: true
+        schema:
+          type: string
+          title: Client secret
+          description: A secret token identifying the client connecting to the API
+          examples:
+          - Syou3EZiO5vuMEgNyBeA8cjEMYOnQDwP
+        description: A secret token identifying the client connecting to the API
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedListResource_MonitoringSubmission_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Projects
+    post:
+      summary: Post Monitoring Submission
+      description: 'Creates a monitoring submission for a project monitoring requirement.
+
+
+        The submission is associated with a previously uploaded source document (see [Post Source](/mrv/post-source)).
+
+        One source may be used to create multiple submissions.'
+      operationId: post_monitoring_submission_projects__project_id__monitoring_requirements__id__submissions_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/IsometricIDPathParam_Project_'
+      - name: id
+        in: path
+        required: true
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/IsometricIDPathParam_MonitoringRequirement_'
+          - $ref: '#/components/schemas/IsometricIDPathParam_ProjectRequirement_'
+          title: Id
+      - name: x-client-secret
+        in: header
+        required: true
+        schema:
+          type: string
+          title: Client secret
+          description: A secret token identifying the client connecting to the API
+          examples:
+          - Syou3EZiO5vuMEgNyBeA8cjEMYOnQDwP
+        description: A secret token identifying the client connecting to the API
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMonitoringSubmissionRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonitoringSubmission'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Projects
+  /projects/{project_id}/monitoring_requirements/{monitoring_requirement_id}/submissions/{id}:
+    delete:
+      summary: Delete Monitoring Submission
+      description: Deletes a monitoring submission for a project monitoring requirement
+      operationId: delete_monitoring_submission_projects__project_id__monitoring_requirements__monitoring_requirement_id__submissions__id__delete
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/IsometricIDPathParam_Project_'
+      - name: monitoring_requirement_id
+        in: path
+        required: true
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/IsometricIDPathParam_MonitoringRequirement_'
+          - $ref: '#/components/schemas/IsometricIDPathParam_ProjectRequirement_'
+          title: Monitoring Requirement Id
+      - name: id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/IsometricIDPathParam_MonitoringSubmission_'
+      - name: x-client-secret
+        in: header
+        required: true
+        schema:
+          type: string
+          title: Client secret
+          description: A secret token identifying the client connecting to the API
+          examples:
+          - Syou3EZiO5vuMEgNyBeA8cjEMYOnQDwP
+        description: A secret token identifying the client connecting to the API
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Projects
+  /projects/{project_id}/storage_locations/{id}:
+    get:
+      summary: Get Storage Location
+      description: Gets storage location for a project.
+      operationId: get_storage_location_projects__project_id__storage_locations__id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/IsometricIDPathParam_Project_'
+      - name: id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/IsometricIDPathParam_StorageLocation_'
+      - name: x-client-secret
+        in: header
+        required: true
+        schema:
+          type: string
+          title: Client secret
+          description: A secret token identifying the client connecting to the API
+          examples:
+          - Syou3EZiO5vuMEgNyBeA8cjEMYOnQDwP
+        description: A secret token identifying the client connecting to the API
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageLocation'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Projects
+    patch:
+      summary: Patch Storage Location
+      description: Patches storage location in the Isometric system.
+      operationId: patch_storage_location_projects__project_id__storage_locations__id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/IsometricIDPathParam_Project_'
+      - name: id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/IsometricIDPathParam_StorageLocation_'
+      - name: x-client-secret
+        in: header
+        required: true
+        schema:
+          type: string
+          title: Client secret
+          description: A secret token identifying the client connecting to the API
+          examples:
+          - Syou3EZiO5vuMEgNyBeA8cjEMYOnQDwP
+        description: A secret token identifying the client connecting to the API
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchStorageLocationRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageLocation'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Projects
+    delete:
+      summary: Delete Storage Location
+      description: Deletes a storage location for a project
+      operationId: delete_storage_location_projects__project_id__storage_locations__id__delete
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/IsometricIDPathParam_Project_'
+      - name: id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/IsometricIDPathParam_StorageLocation_'
+      - name: x-client-secret
+        in: header
+        required: true
+        schema:
+          type: string
+          title: Client secret
+          description: A secret token identifying the client connecting to the API
+          examples:
+          - Syou3EZiO5vuMEgNyBeA8cjEMYOnQDwP
+        description: A secret token identifying the client connecting to the API
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Projects
+  /projects/{project_id}/storage_locations:
+    post:
+      summary: Post Storage Location
+      description: Creates a storage location for a project in the Isometric system.
+      operationId: post_storage_location_projects__project_id__storage_locations_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/IsometricIDPathParam_Project_'
+      - name: x-client-secret
+        in: header
+        required: true
+        schema:
+          type: string
+          title: Client secret
+          description: A secret token identifying the client connecting to the API
+          examples:
+          - Syou3EZiO5vuMEgNyBeA8cjEMYOnQDwP
+        description: A secret token identifying the client connecting to the API
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateStorageLocationRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageLocation'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Projects
+    get:
+      summary: Get Storage Locations
+      description: Gets storage locations for a project.
+      operationId: get_storage_locations_projects__project_id__storage_locations_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/IsometricIDPathParam_Project_'
+      - name: last
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          exclusiveMinimum: 0
+          description: An integer number of items to retrieve before the item represented by the cursor passed in the before parameter. Defaults to 10 with a maximum value of 50.
+          default: 10
+          title: Last
+      - name: before
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          description: An opaque cursor representing the first item in the previously requested page to select items ordered before it. Submit the previously requested page’s start_cursor here when paginated backwards.
+          title: Before
+      - name: first
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          exclusiveMinimum: 0
+          description: An integer number of items to retrieve after the item represented by the cursor passed in the after parameter. Defaults to 10 with a maximum value of 50.
+          default: 10
+          title: First
+      - name: after
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          description: An opaque cursor representing the last item in the previously requested page to select items ordered after it. Submit the previously requested page’s end_cursor here when paginated forwards.
+          title: After
+      - name: x-client-secret
+        in: header
+        required: true
+        schema:
+          type: string
+          title: Client secret
+          description: A secret token identifying the client connecting to the API
+          examples:
+          - Syou3EZiO5vuMEgNyBeA8cjEMYOnQDwP
+        description: A secret token identifying the client connecting to the API
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedListResource_StorageLocation_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Projects
+  /projects/{id}:
+    get:
+      summary: Project
+      description: Information about a specific project.
+      operationId: project_projects__id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/IsometricIDPathParam_Project_'
+      - name: x-client-secret
+        in: header
+        required: true
+        schema:
+          type: string
+          title: Client secret
+          description: A secret token identifying the client connecting to the API
+          examples:
+          - Syou3EZiO5vuMEgNyBeA8cjEMYOnQDwP
+        description: A secret token identifying the client connecting to the API
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/Project_2'
+                - type: 'null'
+                title: Response Project Projects  Id  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Projects
+  /projects/{id}/documents:
+    get:
+      summary: Project Documents
+      description: 'A paginated list of all project documents for the given project.
+
+
+        Returned list of documents will be sorted alphabetically by document name.'
+      operationId: project_documents_projects__id__documents_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/IsometricIDPathParam_Project_'
+      - name: last
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          exclusiveMinimum: 0
+          description: An integer number of items to retrieve before the item represented by the cursor passed in the before parameter. Defaults to 10 with a maximum value of 50.
+          default: 10
+          title: Last
+      - name: before
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          description: An opaque cursor representing the first item in the previously requested page to select items ordered before it. Submit the previously requested page’s start_cursor here when paginated backwards.
+          title: Before
+      - name: first
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          exclusiveMinimum: 0
+          description: An integer number of items to retrieve after the item represented by the cursor passed in the after parameter. Defaults to 10 with a maximum value of 50.
+          default: 10
+          title: First
+      - name: after
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          description: An opaque cursor representing the last item in the previously requested page to select items ordered after it. Submit the previously requested page’s end_cursor here when paginated forwards.
+          title: After
+      - name: x-client-secret
+        in: header
+        required: true
+        schema:
+          type: string
+          title: Client secret
+          description: A secret token identifying the client connecting to the API
+          examples:
+          - Syou3EZiO5vuMEgNyBeA8cjEMYOnQDwP
+        description: A secret token identifying the client connecting to the API
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedListResource_ProjectDocument_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Projects
+components:
+  schemas:
+    IsometricIDPathParam_GhgEntryTemplate_:
+      $ref: '#/components/schemas/IsometricIDRequestParam_GhgEntryTemplate_'
+    IsometricIDPathParam_MonitoringRequirement_:
+      $ref: '#/components/schemas/IsometricIDRequestParam_MonitoringRequirement_'
+    StorageLocation:
+      properties:
+        id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Id
+          examples:
+          - slc_1F3PMGVC91S0SBK3
+          - slc_1DCY5K78BSBX3XMZ
+          example: slc_1F3PMGVC91S0SBK3
+        name:
+          type: string
+          maxLength: 100
+          title: Name
+          description: The name of the storage location
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          description: Optional description of the storage location
+        latitude:
+          anyOf:
+          - type: number
+            maximum: 90.0
+            minimum: -90.0
+          - type: 'null'
+          title: Latitude
+          description: The latitude coordinate of the storage location
+        longitude:
+          anyOf:
+          - type: number
+            maximum: 180.0
+            minimum: -180.0
+          - type: 'null'
+          title: Longitude
+          description: The longitude coordinate of the storage location
+        supplier_reference_id:
+          anyOf:
+          - type: string
+            maxLength: 100
+            minLength: 1
+            description: A string that must be unique for all resources created by a specific supplier. It can be used by a client to identify the correct objects in their system.
+          - type: 'null'
+          title: Supplier Reference Id
+          description: Optional supplier-specific reference ID for the storage location
+        project_id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Project Id
+          description: The ID of the project this storage location belongs to
+          examples:
+          - prj_1CTWZQGKE1S0VAXA
+          - prj_1E0QTWB22SBX34D1
+          example: prj_1CTWZQGKE1S0VAXA
+        supplier_id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Supplier Id
+          description: The ID of the supplier this storage location belongs to
+          examples:
+          - spl_1CC712KFS1S0YKPS
+          - spl_1FJBMMGR3SBXKDME
+          example: spl_1CC712KFS1S0YKPS
+        storage_method:
+          $ref: '#/components/schemas/StorageMethod'
+          description: The method of storage by the storage location
+      type: object
+      required:
+      - id
+      - name
+      - project_id
+      - supplier_id
+      - storage_method
+      title: StorageLocation
+    IsometricIDRequestParam_StorageUnit_:
+      type: string
+      maxLength: 37
+      minLength: 20
+      examples:
+      - sgu_1E844FWM71S0E0TM
+      - sgu_1DTBHQEBGSBXBCZV
+      example: sgu_1E844FWM71S0E0TM
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    PatchStorageLocationRequest:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - $ref: '#/components/schemas/Undefined'
+          title: Name
+          default:
+            __typename: Undefined
+        description:
+          anyOf:
+          - type: string
+          - $ref: '#/components/schemas/Undefined'
+          title: Description
+          default:
+            __typename: Undefined
+        latitude:
+          anyOf:
+          - type: number
+            maximum: 90.0
+            minimum: -90.0
+          - $ref: '#/components/schemas/Undefined'
+          title: Latitude
+          default:
+            __typename: Undefined
+        longitude:
+          anyOf:
+          - type: number
+            maximum: 180.0
+            minimum: -180.0
+          - $ref: '#/components/schemas/Undefined'
+          title: Longitude
+          default:
+            __typename: Undefined
+        supplier_reference_id:
+          anyOf:
+          - type: string
+            maxLength: 100
+            minLength: 1
+            description: A string that must be unique for all resources created by a specific supplier. It can be used by a client to identify the correct objects in their system.
+          - $ref: '#/components/schemas/Undefined'
+          title: Supplier Reference Id
+          default:
+            __typename: Undefined
+        storage_method:
+          anyOf:
+          - $ref: '#/components/schemas/StorageMethod'
+          - $ref: '#/components/schemas/Undefined'
+          title: Storage Method
+          default:
+            __typename: Undefined
+      type: object
+      title: PatchStorageLocationRequest
+    IsometricIDPathParam_ProjectRequirement_:
+      $ref: '#/components/schemas/IsometricIDRequestParam_ProjectRequirement_'
+    PaginatedListResource_Project_:
+      properties:
+        nodes:
+          items:
+            $ref: '#/components/schemas/Project'
+          type: array
+          title: Nodes
+        total_count:
+          type: integer
+          title: Total Count
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      type: object
+      required:
+      - nodes
+      - total_count
+      - page_info
+      title: PaginatedListResource[Project]
+    RemovalTemplateComponentGroup:
+      properties:
+        id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Id
+          examples:
+          - rtg_1EGQ9DZXZ1S05S28
+          - rtg_1CWEFDQ7GSBX1X5C
+          example: rtg_1EGQ9DZXZ1S05S28
+        key:
+          type: string
+          title: Key
+        display_name:
+          type: string
+          title: Display Name
+        description:
+          type: string
+          title: Description
+        components:
+          items:
+            $ref: '#/components/schemas/RemovalTemplateComponent'
+          type: array
+          title: Components
+      type: object
+      required:
+      - id
+      - key
+      - display_name
+      - description
+      - components
+      title: RemovalTemplateComponentGroup
+    ProjectDocument:
+      properties:
+        id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Id
+          examples:
+          - pjd_1ESC3V76T1S0S6J3
+          - pjd_1E0AZYQ9ESBX2569
+          example: pjd_1ESC3V76T1S0S6J3
+        display_name:
+          type: string
+          title: Display Name
+        project_id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Project Id
+          examples:
+          - prj_1CTWZQGKE1S0VAXA
+          - prj_1E0QTWB22SBX34D1
+          example: prj_1CTWZQGKE1S0VAXA
+        url:
+          type: string
+          title: Url
+      type: object
+      required:
+      - id
+      - display_name
+      - project_id
+      - url
+      title: ProjectDocument
+    Project_2:
+      properties:
+        id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Id
+          examples:
+          - prj_1CTWZQGKE1S0VAXA
+          - prj_1E0QTWB22SBX34D1
+          example: prj_1CTWZQGKE1S0VAXA
+        name:
+          type: string
+          title: Name
+        supplier:
+          $ref: '#/components/schemas/Supplier'
+        status:
+          $ref: '#/components/schemas/ProjectStatus'
+          description: The project status
+        short_code:
+          type: string
+          title: Short Code
+          description: A random short code, uniquely identifying the project
+          examples:
+          - F5X7
+        url:
+          type: string
+          title: Url
+          description: The url to the Isometric page for this project
+        process_key:
+          type: string
+          title: Process Key
+          description: The carbon removal process used in this project
+        pathway:
+          $ref: '#/components/schemas/Pathway'
+          description: The pathway this project is following
+          examples:
+          - biomass_carbon_removal_and_storage
+        protocol_slug:
+          type: string
+          title: Protocol Slug
+          description: The slug of the protocol this project is following
+        country_code:
+          type: string
+          title: Country Code
+          description: A three letter ISO 3166-1 alpha-3 code representing a country
+          examples:
+          - GBR
+        validator_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Validator Name
+          description: The name of the organization responsible for validating this project, if assigned
+        current_verifier_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Current Verifier Name
+          description: The name of the organization currently responsible for verifying this project, if assigned
+        crediting_period_start:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Crediting Period Start
+        crediting_period_end:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Crediting Period End
+        issued_credits_total:
+          $ref: '#/components/schemas/CreditQuantity'
+          description: The total number of credits Isometric has issued to this project, including those allocated to the buffer pool
+        retired_credits_total:
+          $ref: '#/components/schemas/CreditQuantity'
+          description: The total number of credits from this project that have been retired, including those allocated to the buffer pool
+        issued_buffer_pool_credits_total:
+          $ref: '#/components/schemas/CreditQuantity'
+          description: The total number of credits from this project that have been allocated to the supplier's buffer pool
+        retired_buffer_pool_credits_total:
+          $ref: '#/components/schemas/CreditQuantity'
+          description: The total number of credits from this project that have been retired from the supplier's buffer pool
+        location:
+          anyOf:
+          - $ref: '#/components/schemas/Location'
+          - type: 'null'
+      type: object
+      required:
+      - id
+      - name
+      - supplier
+      - status
+      - short_code
+      - url
+      - process_key
+      - pathway
+      - protocol_slug
+      - country_code
+      - validator_name
+      - current_verifier_name
+      - crediting_period_start
+      - crediting_period_end
+      - issued_credits_total
+      - retired_credits_total
+      - issued_buffer_pool_credits_total
+      - retired_buffer_pool_credits_total
+      - location
+      title: Project
+    Location:
+      properties:
+        country_code:
+          type: string
+          title: Country Code
+        country_name:
+          type: string
+          title: Country Name
+        latitude:
+          type: number
+          maximum: 90.0
+          minimum: -90.0
+          title: Latitude
+        longitude:
+          type: number
+          maximum: 180.0
+          minimum: -180.0
+          title: Longitude
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+      type: object
+      required:
+      - country_code
+      - country_name
+      - latitude
+      - longitude
+      title: Location
+    Undefined:
+      properties:
+        __typename:
+          type: string
+          const: Undefined
+          title: Type name
+          description: Contains the name of the model (formally, OpenAPI Schema Object). Used to determine the type of data, for example when two different types are unioned.
+          default: Undefined
+      additionalProperties: false
+      type: object
+      title: Undefined
+      description: An explicit representation of an undefined value in the Isometric REST API. Used, for example, to distinguish between explicit null inputs that clear a property, and not provided inputs which leave the property as is.
+    Frequency:
+      type: string
+      enum:
+      - na
+      - once
+      - optional
+      - if_needed
+      - every_1_days
+      - every_1_months
+      - every_2_weeks
+      - every_3_months
+      - every_6_months
+      - every_2_years
+      - every_5_years
+      title: Frequency
+    CreateStorageLocationRequest:
+      properties:
+        project_id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Project Id
+          examples:
+          - prj_1CTWZQGKE1S0VAXA
+          - prj_1E0QTWB22SBX34D1
+          example: prj_1CTWZQGKE1S0VAXA
+        name:
+          type: string
+          title: Name
+        storage_method:
+          anyOf:
+          - $ref: '#/components/schemas/StorageMethod'
+          - $ref: '#/components/schemas/Undefined'
+          title: Storage Method
+          default:
+            __typename: Undefined
+        latitude:
+          type: number
+          maximum: 90.0
+          minimum: -90.0
+          title: Latitude
+        longitude:
+          type: number
+          maximum: 180.0
+          minimum: -180.0
+          title: Longitude
+        description:
+          anyOf:
+          - type: string
+          - $ref: '#/components/schemas/Undefined'
+          title: Description
+          default:
+            __typename: Undefined
+        supplier_reference_id:
+          anyOf:
+          - type: string
+            maxLength: 100
+            minLength: 1
+            description: A string that must be unique for all resources created by a specific supplier. It can be used by a client to identify the correct objects in their system.
+          - $ref: '#/components/schemas/Undefined'
+          title: Supplier Reference Id
+          default:
+            __typename: Undefined
+      type: object
+      required:
+      - project_id
+      - name
+      - latitude
+      - longitude
+      title: CreateStorageLocationRequest
+    IsometricIDRequestParam_MonitoringSubmission_:
+      type: string
+      maxLength: 37
+      minLength: 20
+      examples:
+      - mns_1D46WGW6A1S03FRG
+      - mns_1DCRH1P6JSBX480H
+      example: mns_1D46WGW6A1S03FRG
+    IsometricIDRequestParam_GhgEntryTemplate_:
+      type: string
+      maxLength: 37
+      minLength: 20
+      examples:
+      - rvt_1EVC8RZFE1S0BAT6
+      - rvt_1ECDZGE2DSBX88EX
+      example: rvt_1EVC8RZFE1S0BAT6
+    PaginatedListResource_StorageLocation_:
+      properties:
+        nodes:
+          items:
+            $ref: '#/components/schemas/StorageLocation'
+          type: array
+          title: Nodes
+        total_count:
+          type: integer
+          title: Total Count
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      type: object
+      required:
+      - nodes
+      - total_count
+      - page_info
+      title: PaginatedListResource[StorageLocation]
+    RemovalTemplateComponentInput:
+      properties:
+        input_key:
+          type: string
+          title: Input Key
+          description: The key which identifies an specific input to the component blueprint.
+        datapoint_id:
+          anyOf:
+          - type: string
+            maxLength: 37
+            minLength: 20
+            examples:
+            - dtp_1DVKHKS101S0Q61Q
+            - dtp_1DJN8P57VSBXASFX
+            example: dtp_1DVKHKS101S0Q61Q
+          - type: 'null'
+          title: Datapoint Id
+        display_name:
+          type: string
+          title: Display Name
+        type:
+          $ref: '#/components/schemas/ComponentInputType'
+        quantity_kind:
+          $ref: '#/components/schemas/QuantityKindType'
+          description: The type of datapoint value that the input requires. Units compatible with this type can be found in the component blueprint library.
+      type: object
+      required:
+      - input_key
+      - datapoint_id
+      - display_name
+      - type
+      - quantity_kind
+      title: RemovalTemplateComponentInput
+    CreateMonitoringSubmissionRequest:
+      properties:
+        source_id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Source Id
+          description: The Isometric ID of the source that the submission is for.
+          examples:
+          - src_1EBBF4M7X1S06G1Y
+          - src_1DW1B17VNSBX37N0
+          example: src_1EBBF4M7X1S06G1Y
+        valid_from:
+          type: string
+          format: date-time
+          title: Valid From
+          description: Signifies the start of the period that the submission is valid for.
+        valid_to:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Valid To
+          description: Signifies the end of the period that the submission is valid for.
+        supplier_reference_id:
+          anyOf:
+          - type: string
+            maxLength: 100
+            minLength: 1
+            description: A string that must be unique for all resources created by a specific supplier. It can be used by a client to identify the correct objects in their system.
+          - type: 'null'
+          title: Supplier Reference Id
+          description: Supplier provided reference ID.
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+          description: Any additional notes or comments.
+          examples:
+          - Pages 14-21
+      type: object
+      required:
+      - source_id
+      - valid_from
+      title: CreateMonitoringSubmissionRequest
+    ProjectStatus:
+      type: string
+      enum:
+      - draft
+      - preview
+      - under_validation
+      - validated
+      - validation_unsuccessful
+      - cancelled
+      title: ProjectStatus
+    IsometricIDPathParam_Project_:
+      $ref: '#/components/schemas/IsometricIDRequestParam_Project_'
+    IsometricIDQueryParam_StorageUnit_:
+      $ref: '#/components/schemas/IsometricIDRequestParam_StorageUnit_'
+    MonitoringPhase:
+      type: string
+      enum:
+      - pre_op
+      - operation
+      - post_op
+      - feedstock
+      title: MonitoringPhase
+    RemovalTemplate:
+      properties:
+        id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Id
+          examples:
+          - rvt_1EVC8RZFE1S0BAT6
+          - rvt_1ECDZGE2DSBX88EX
+          example: rvt_1EVC8RZFE1S0BAT6
+        supplier_reference_id:
+          anyOf:
+          - type: string
+            maxLength: 100
+            minLength: 1
+            description: A string that must be unique for all resources created by a specific supplier. It can be used by a client to identify the correct objects in their system.
+          - type: 'null'
+          title: Supplier Reference Id
+        display_name:
+          type: string
+          title: Display Name
+        project_id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Project Id
+          examples:
+          - prj_1CTWZQGKE1S0VAXA
+          - prj_1E0QTWB22SBX34D1
+          example: prj_1CTWZQGKE1S0VAXA
+        groups:
+          items:
+            $ref: '#/components/schemas/RemovalTemplateComponentGroup'
+          type: array
+          title: Groups
+      type: object
+      required:
+      - id
+      - supplier_reference_id
+      - display_name
+      - project_id
+      - groups
+      title: RemovalTemplate
+    StorageMethod:
+      type: string
+      enum:
+      - biochar_field
+      - biochar_landfill
+      - biomass_injection_well
+      - biomass_subsurface
+      - saline_aquifer
+      - in_situ_mineralization
+      title: StorageMethod
+    IsometricIDRequestParam_Project_:
+      type: string
+      maxLength: 37
+      minLength: 20
+      examples:
+      - prj_1CTWZQGKE1S0VAXA
+      - prj_1E0QTWB22SBX34D1
+      example: prj_1CTWZQGKE1S0VAXA
+    QuantityKindType:
+      type: string
+      enum:
+      - acidity
+      - activity_concentration
+      - amount_of_substance
+      - amount_of_substance_concentration
+      - amount_of_substance_per_mass
+      - area
+      - area_carbon_emission_factor
+      - buffer_ph
+      - bulk_density
+      - count
+      - currency
+      - currency_carbon_emission_factor
+      - depth
+      - diameter
+      - diameter_at_breast_height
+      - dimensionless
+      - dimensionless_ratio
+      - distance
+      - distance_carbon_emission_factor
+      - dose_equivalent_rate
+      - electric_current
+      - elevation
+      - energy
+      - energy_carbon_emission_factor
+      - energy_density
+      - exchangeable_amount_of_substance_per_mass
+      - fuel_economy
+      - height
+      - ionic_strength
+      - latitude
+      - longitude
+      - mass
+      - mass_carbon
+      - mass_carbon_emission_factor
+      - mass_cdr_potential
+      - mass_concentration
+      - mass_density
+      - mass_distance
+      - mass_distance_carbon_emission_factor
+      - mass_energy_density
+      - mass_flow_rate
+      - mass_fraction
+      - mass_fraction_dry_basis
+      - mass_fraction_wet_basis
+      - mass_per_area
+      - mass_ratio
+      - molality_of_solute
+      - molar_mass
+      - mole_fraction
+      - partial_pressure
+      - particle_diameter
+      - particle_mass_density
+      - power
+      - pressure
+      - specific_surface_area
+      - specific_volume
+      - temperature
+      - time
+      - time_emission_factor
+      - voltage
+      - volume
+      - volume_carbon_emission_factor
+      - volume_distance_carbon_emission_factor
+      - volume_flow_rate
+      - volume_fraction
+      - volume_per_area
+      title: QuantityKindType
+    PageInfo:
+      properties:
+        has_previous_page:
+          type: boolean
+          title: Has Previous Page
+        start_cursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Start Cursor
+        has_next_page:
+          type: boolean
+          title: Has Next Page
+        end_cursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: End Cursor
+      type: object
+      required:
+      - has_previous_page
+      - start_cursor
+      - has_next_page
+      - end_cursor
+      title: PageInfo
+    PaginatedListResource_ProjectDocument_:
+      properties:
+        nodes:
+          items:
+            $ref: '#/components/schemas/ProjectDocument'
+          type: array
+          title: Nodes
+        total_count:
+          type: integer
+          title: Total Count
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      type: object
+      required:
+      - nodes
+      - total_count
+      - page_info
+      title: PaginatedListResource[ProjectDocument]
+    PaginatedListResource_MonitoringSubmission_:
+      properties:
+        nodes:
+          items:
+            $ref: '#/components/schemas/MonitoringSubmission'
+          type: array
+          title: Nodes
+        total_count:
+          type: integer
+          title: Total Count
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      type: object
+      required:
+      - nodes
+      - total_count
+      - page_info
+      title: PaginatedListResource[MonitoringSubmission]
+    Project:
+      properties:
+        id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Id
+          examples:
+          - prj_1CTWZQGKE1S0VAXA
+          - prj_1E0QTWB22SBX34D1
+          example: prj_1CTWZQGKE1S0VAXA
+        name:
+          type: string
+          title: Name
+        country_code:
+          type: string
+          title: Country Code
+        process_key:
+          type: string
+          title: Process Key
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        short_description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Short Description
+        risk_of_reversal:
+          anyOf:
+          - $ref: '#/components/schemas/RiskOfReversal'
+          - type: 'null'
+      type: object
+      required:
+      - id
+      - name
+      - country_code
+      - process_key
+      - description
+      - short_description
+      - risk_of_reversal
+      title: Project
+    PaginatedListResource_ProjectMonitoringRequirement_:
+      properties:
+        nodes:
+          items:
+            $ref: '#/components/schemas/ProjectMonitoringRequirement'
+          type: array
+          title: Nodes
+        total_count:
+          type: integer
+          title: Total Count
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      type: object
+      required:
+      - nodes
+      - total_count
+      - page_info
+      title: PaginatedListResource[ProjectMonitoringRequirement]
+    ComponentInputType:
+      type: string
+      enum:
+      - fixed
+      - monitored
+      title: ComponentInputType
+    IsometricIDQueryParam_StorageLocation_:
+      $ref: '#/components/schemas/IsometricIDRequestParam_StorageLocation_'
+    IsometricIDPathParam_MonitoringSubmission_:
+      $ref: '#/components/schemas/IsometricIDRequestParam_MonitoringSubmission_'
+    Supplier:
+      properties:
+        id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Id
+          examples:
+          - spl_1CC712KFS1S0YKPS
+          - spl_1FJBMMGR3SBXKDME
+          example: spl_1CC712KFS1S0YKPS
+        short_description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Short Description
+        long_description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Long Description
+        organisation:
+          $ref: '#/components/schemas/Organisation'
+        location:
+          anyOf:
+          - $ref: '#/components/schemas/Location'
+          - type: 'null'
+      type: object
+      required:
+      - id
+      - short_description
+      - long_description
+      - organisation
+      - location
+      title: Supplier
+    RiskOfReversal:
+      type: string
+      enum:
+      - no_observable_risk
+      - very_low_v2
+      - very_low
+      - low
+      - medium
+      - high
+      - risk_assessment_driven
+      title: RiskOfReversal
+    Organisation:
+      properties:
+        id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Id
+          examples:
+          - org_1GB56M1ST1S0GVNA
+          - org_1CP8EQDNQSBXTMR2
+          example: org_1GB56M1ST1S0GVNA
+        name:
+          type: string
+          title: Name
+          examples:
+          - Isometric
+        domain:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Domain
+          examples:
+          - isometric.com
+      type: object
+      required:
+      - id
+      - name
+      - domain
+      title: Organisation
+    RemovalTemplateComponent:
+      properties:
+        id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Id
+          examples:
+          - rtc_1DAA58EDM1S0AMPN
+          - rtc_1CQAKRCVQSBXKKTM
+          example: rtc_1DAA58EDM1S0AMPN
+        display_name:
+          type: string
+          title: Display Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        blueprint_key:
+          type: string
+          title: Blueprint Key
+        removal_template_id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Removal Template Id
+          examples:
+          - rvt_1EVC8RZFE1S0BAT6
+          - rvt_1ECDZGE2DSBX88EX
+          example: rvt_1EVC8RZFE1S0BAT6
+        removal_template_component_group_id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Removal Template Component Group Id
+          examples:
+          - rtg_1EGQ9DZXZ1S05S28
+          - rtg_1CWEFDQ7GSBX1X5C
+          example: rtg_1EGQ9DZXZ1S05S28
+        inputs:
+          items:
+            $ref: '#/components/schemas/RemovalTemplateComponentInput'
+          type: array
+          title: Inputs
+          description: Inputs for this removal template component based on its component blueprint, including any customized display names and fixed input datapoints.
+      type: object
+      required:
+      - id
+      - display_name
+      - description
+      - blueprint_key
+      - removal_template_id
+      - removal_template_component_group_id
+      - inputs
+      title: RemovalTemplateComponent
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    PaginatedListResource_RemovalTemplate_:
+      properties:
+        nodes:
+          items:
+            $ref: '#/components/schemas/RemovalTemplate'
+          type: array
+          title: Nodes
+        total_count:
+          type: integer
+          title: Total Count
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      type: object
+      required:
+      - nodes
+      - total_count
+      - page_info
+      title: PaginatedListResource[RemovalTemplate]
+    IsometricIDRequestParam_ProjectRequirement_:
+      type: string
+      maxLength: 37
+      minLength: 20
+      examples:
+      - pfx_1HQTSP3RX1S0Y2RG
+      - pfx_1FFWQZH4HSBX6F9N
+      example: pfx_1HQTSP3RX1S0Y2RG
+    IsometricIDRequestParam_MonitoringRequirement_:
+      type: string
+      maxLength: 37
+      minLength: 20
+      examples:
+      - mnr_1DJJQY5C61S0R519
+      - mnr_1EKAZQMAZSBXDV59
+      example: mnr_1DJJQY5C61S0R519
+    CreditQuantity:
+      properties:
+        credits:
+          type: number
+          title: Credits
+          description: A representation of the credit quantity as a fractional amount, to 3 decimal places. Where 1 unit represents 1 credit and 1 ton of CO₂e.
+          examples:
+          - 125.632
+        credit_kgs:
+          type: integer
+          title: Credit Kgs
+          description: A representation of the credit quantity as an integer kilogram amount. Where 1 unit represents 0.001 credits and 1 kilogram of CO₂e. This field can handle bigint values.
+          examples:
+          - 125632
+      type: object
+      required:
+      - credits
+      - credit_kgs
+      title: CreditQuantity
+    ProjectMonitoringRequirement:
+      properties:
+        id:
+          anyOf:
+          - type: string
+            maxLength: 37
+            minLength: 20
+            examples:
+            - pfx_1HQTSP3RX1S0Y2RG
+            - pfx_1FFWQZH4HSBX6F9N
+            example: pfx_1HQTSP3RX1S0Y2RG
+          - type: string
+            maxLength: 37
+            minLength: 20
+            examples:
+            - mnr_1DJJQY5C61S0R519
+            - mnr_1EKAZQMAZSBXDV59
+            example: mnr_1DJJQY5C61S0R519
+          title: Id
+        project_id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Project Id
+          examples:
+          - prj_1CTWZQGKE1S0VAXA
+          - prj_1E0QTWB22SBX34D1
+          example: prj_1CTWZQGKE1S0VAXA
+        storage_location_id:
+          anyOf:
+          - type: string
+            maxLength: 37
+            minLength: 20
+            examples:
+            - slc_1F3PMGVC91S0SBK3
+            - slc_1DCY5K78BSBX3XMZ
+            example: slc_1F3PMGVC91S0SBK3
+          - type: 'null'
+          title: Storage Location Id
+        storage_unit_id:
+          anyOf:
+          - type: string
+            maxLength: 37
+            minLength: 20
+            examples:
+            - sgu_1E844FWM71S0E0TM
+            - sgu_1DTBHQEBGSBXBCZV
+            example: sgu_1E844FWM71S0E0TM
+          - type: 'null'
+          title: Storage Unit Id
+        display_name:
+          type: string
+          title: Display Name
+        monitoring_phase:
+          $ref: '#/components/schemas/MonitoringPhase'
+        frequency:
+          $ref: '#/components/schemas/Frequency'
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+      type: object
+      required:
+      - id
+      - project_id
+      - storage_location_id
+      - storage_unit_id
+      - display_name
+      - monitoring_phase
+      - frequency
+      - notes
+      title: ProjectMonitoringRequirement
+    IsometricIDRequestParam_StorageLocation_:
+      type: string
+      maxLength: 37
+      minLength: 20
+      examples:
+      - slc_1F3PMGVC91S0SBK3
+      - slc_1DCY5K78BSBX3XMZ
+      example: slc_1F3PMGVC91S0SBK3
+    MonitoringSubmission:
+      properties:
+        id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Id
+          examples:
+          - mns_1D46WGW6A1S03FRG
+          - mns_1DCRH1P6JSBX480H
+          example: mns_1D46WGW6A1S03FRG
+        project_monitoring_requirement_id:
+          anyOf:
+          - type: string
+            maxLength: 37
+            minLength: 20
+            examples:
+            - pfx_1HQTSP3RX1S0Y2RG
+            - pfx_1FFWQZH4HSBX6F9N
+            example: pfx_1HQTSP3RX1S0Y2RG
+          - type: string
+            maxLength: 37
+            minLength: 20
+            examples:
+            - mnr_1DJJQY5C61S0R519
+            - mnr_1EKAZQMAZSBXDV59
+            example: mnr_1DJJQY5C61S0R519
+          title: Project Monitoring Requirement Id
+        source_id:
+          type: string
+          maxLength: 37
+          minLength: 20
+          title: Source Id
+          examples:
+          - src_1EBBF4M7X1S06G1Y
+          - src_1DW1B17VNSBX37N0
+          example: src_1EBBF4M7X1S06G1Y
+        valid_from:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Valid From
+        valid_to:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Valid To
+        supplier_reference_id:
+          anyOf:
+          - type: string
+            maxLength: 100
+            minLength: 1
+            description: A string that must be unique for all resources created by a specific supplier. It can be used by a client to identify the correct objects in their system.
+          - type: 'null'
+          title: Supplier Reference Id
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+      type: object
+      required:
+      - id
+      - project_monitoring_requirement_id
+      - source_id
+      - valid_from
+      - valid_to
+      - supplier_reference_id
+      - notes
+      title: MonitoringSubmission
+    IsometricIDPathParam_StorageLocation_:
+      $ref: '#/components/schemas/IsometricIDRequestParam_StorageLocation_'
+    Pathway:
+      type: string
+      enum:
+      - biomass_carbon_removal_and_storage
+      - direct_air_capture
+      - enhanced_weathering
+      - carbon_mineralization
+      - reforestation
+      - marine
+      - superpollutants
+      title: Pathway
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      description: 'A JWT Bearer token header for authentication and authorization, in the format `Authorization: Bearer <token>`'
+      scheme: bearer
+      bearerFormat: JWT
